@@ -212,6 +212,14 @@
     .recount-table td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
     .recount-table tr:last-child td { border-bottom: none; }
     .recount-table tr:hover td { background: rgba(26,46,74,0.02); }
+    .room-qty-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem; }
+    .room-qty-row { display: flex; align-items: center; justify-content: space-between; background: var(--cream); border: 1px solid var(--border); border-radius: 6px; padding: 0.4rem 0.65rem; }
+    .room-qty-row.has-qty { background: #f0faf5; border-color: #9dd0c0; }
+    .room-qty-label { font-size: 0.82rem; font-weight: 500; color: var(--navy); }
+    .room-qty-teacher { font-size: 0.68rem; color: var(--muted); }
+    .room-qty-input { width: 60px; text-align: center; padding: 0.25rem 0.3rem; border: 1.5px solid var(--border); border-radius: 5px; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 600; background: var(--surface); }
+    .room-qty-input:focus { outline: none; border-color: var(--navy-l); }
+    .room-qty-input.has-val { border-color: var(--success); background: #f0faf5; }
     .recount-note { font-size: 0.78rem; color: var(--muted); background: #f0faf5; border: 1px solid #c0e8d0; border-radius: 6px; padding: 0.6rem 0.75rem; margin-bottom: 0.75rem; }
 
     /* TOAST */
@@ -460,7 +468,7 @@ function renderAll() {
         <input class="search-input" id="search-input" type="search" placeholder="Search title or author…" autocomplete="off">
         <div class="search-dropdown" id="search-dropdown"></div>
       </div>
-      <button class="btn btn-primary" onclick="openAddToCatalogModal()">＋ New Book to Catalog</button>
+      <button class="btn btn-primary" onclick="openAddBookModal()">＋ Add New Book</button>
       <button class="btn btn-secondary" onclick="openImportModal()">⬆ Import CSV</button>
       <button class="btn btn-secondary" onclick="exportCSV()">⬇ Export CSV</button>
     </div>
@@ -507,7 +515,7 @@ function renderRoom(roomId) {
       <button class="btn btn-teal" onclick="openRecountModal('${roomId}')">📋 Recount Room</button>
     ` : mode==='edit' ? `
       ${hasPending?`<button class="btn btn-primary" id="save-qty-btn" onclick="saveAllQty()">💾 Save Changes</button>`:''}
-      <button class="btn btn-primary" onclick="openAddToRoomModal('${roomId}')">＋ Add Books Here</button>
+      <button class="btn btn-primary" onclick="openAddBookModal()">＋ Add New Book</button>
       <button class="btn btn-gold active" onclick="exitEdit()">✓ Done</button>
     ` : `<button class="btn btn-teal active" onclick="setMode('view')">✓ Done</button>`;
 
@@ -735,50 +743,73 @@ function deleteBook(bookId) {
 }
 
 // ── ADD TO CATALOG (All Books tab) ────────────────────────
-function openAddToCatalogModal() {
-  openModal(`<div class="modal">
+function openAddBookModal() {
+  openModal(`<div class="modal wide">
     <div class="modal-header">
-      <div><h3>Add New Book to Catalog</h3>
-        <div class="modal-subtitle">Creates the book record — does not assign it to a room yet.</div>
+      <div>
+        <h3>Add New Book</h3>
+        <div class="modal-subtitle">Enter book details and assign copies to rooms. At least one room must have a quantity.</div>
       </div>
       <button class="modal-close" onclick="closeModal()">×</button>
     </div>
     <div class="modal-body">
-      <div class="form-group"><label>Title *</label>
-        <input class="form-input" id="ac-title" type="text" placeholder="Book title…">
-        <div id="ac-warn"></div>
+      <div class="form-group">
+        <label>Title *</label>
+        <input class="form-input" id="ab-title" type="text" placeholder="Book title…" autocomplete="off">
+        <div id="ab-warn"></div>
       </div>
-      <div class="form-group"><label>Author *</label>
-        <input class="form-input" id="ac-author" type="text" placeholder="Author name…"></div>
-      <div class="form-group"><label>Course</label>
-        <select class="form-select" id="ac-course">
+      <div class="form-group">
+        <label>Author *</label>
+        <input class="form-input" id="ab-author" type="text" placeholder="Author name…" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label>Course</label>
+        <select class="form-select" id="ab-course">
           ${COURSES.map(c=>`<option value="${c==='Unassigned'?'':c}">${c}</option>`).join('')}
         </select>
-        <div class="form-hint">Restrict this book to a specific course, or leave as Unassigned.</div>
       </div>
       <hr class="divider">
-      <div class="form-group"><label>Also add to a room now? (optional)</label>
-        <select class="form-select" id="ac-room">
-          <option value="">— Catalog only (no room) —</option>
-          ${ROOMS.map(r=>`<option value="${r}">${r}</option>`).join('')}
-        </select>
-      </div>
-      <div class="form-group" id="ac-qty-wrap" style="display:none">
-        <label>Quantity for that room</label>
-        <input class="form-input" id="ac-qty" type="number" min="1" value="1">
+      <div class="form-group">
+        <label>Assign to Rooms <span style="font-weight:400;color:var(--muted)">(at least one required)</span></label>
+        <div class="room-qty-grid" id="ab-rooms">
+          ${ROOMS.map(r => {
+            const t = teacher(r);
+            return `<div class="room-qty-row" id="ab-row-${r}">
+              <div>
+                <div class="room-qty-label">${r}</div>
+                ${t ? `<div class="room-qty-teacher">${esc(t)}</div>` : ''}
+              </div>
+              <input class="room-qty-input" type="number" min="0" value="0"
+                id="ab-qty-${r}" data-room="${r}"
+                oninput="onAbQtyInput(this)">
+            </div>`;
+          }).join('')}
+        </div>
+        <div class="form-hint" id="ab-room-hint" style="color:var(--danger);display:none">⚠ Add at least one copy to a room before saving.</div>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="submitAddToCatalog()">Add to Catalog</button>
+      <button class="btn btn-primary" onclick="submitAddBook()">Add Book</button>
     </div>
-  </div>`, box=>{
-    box.querySelector('#ac-room').addEventListener('change',e=>{
-      box.querySelector('#ac-qty-wrap').style.display=e.target.value?'block':'none';
+  </div>`, box => {
+    box.querySelector('#ab-title').addEventListener('input', e => {
+      checkDupe(e.target.value, box.querySelector('#ab-author').value, 'ab-warn');
     });
-    box.querySelector('#ac-title').addEventListener('input',e=>checkDupe(e.target.value,box.querySelector('#ac-author').value,'ac-warn'));
-    box.querySelector('#ac-title').focus();
+    box.querySelector('#ab-title').focus();
   });
+}
+
+function onAbQtyInput(inp) {
+  const val = parseInt(inp.value) || 0;
+  inp.value = Math.max(0, val);
+  inp.classList.toggle('has-val', val > 0);
+  const row = document.getElementById('ab-row-' + inp.dataset.room);
+  if (row) row.classList.toggle('has-qty', val > 0);
+  // Hide/show hint
+  const anyQty = ROOMS.some(r => (parseInt(document.getElementById('ab-qty-'+r)?.value)||0) > 0);
+  const hint = document.getElementById('ab-room-hint');
+  if (hint) hint.style.display = anyQty ? 'none' : 'none'; // only show on submit attempt
 }
 
 function checkDupe(title,author,warnId) {
@@ -788,179 +819,75 @@ function checkDupe(title,author,warnId) {
   w.innerHTML=ex?'<div class="form-warning">⚠ This title/author already exists in the catalog.</div>':'';
 }
 
-async function submitAddToCatalog() {
-  const title=document.getElementById('ac-title').value;
-  const author=document.getElementById('ac-author').value;
-  const course=document.getElementById('ac-course').value;
-  const room=document.getElementById('ac-room').value;
-  const qty=parseInt(document.getElementById('ac-qty')?.value)||1;
-  if(!title.trim()){ toast('Title is required','warning'); return; }
-  if(!author.trim()){ toast('Author is required','warning'); return; }
-  const ex=S.books.find(b=>bKey(b.title,b.author)===bKey(title,author));
-  if(ex){ toast('This book already exists in the catalog','warning'); return; }
-  await doAddBook(title,author,room||null,qty,course);
-}
+async function submitAddBook() {
+  const title  = document.getElementById('ab-title').value.trim();
+  const author = document.getElementById('ab-author').value.trim();
+  const course = document.getElementById('ab-course').value;
 
-// ── ADD BOOKS TO ROOM (room tab) ──────────────────────────
-let acSel=null, acMode='search';
+  if (!title)  { toast('Title is required','warning'); return; }
+  if (!author) { toast('Author is required','warning'); return; }
 
-function openAddToRoomModal(roomId) {
-  openModal(`<div class="modal">
-    <div class="modal-header">
-      <div><h3>Add Books to Room ${roomId}</h3>
-        <div class="modal-subtitle">Search the catalog or create a brand-new book.</div>
-      </div>
-      <button class="modal-close" onclick="closeModal()">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label>Search catalog</label>
-        <div class="autocomplete-wrap">
-          <input class="form-input" id="atr-q" type="text" placeholder="Type title or author…" autocomplete="off">
-          <div class="autocomplete-list" id="atr-list"></div>
-        </div>
-        <div class="form-hint">Type at least 2 characters to search existing books</div>
-      </div>
-      <div id="atr-existing" style="display:none">
-        <div class="form-info">📚 Adding copies of an existing book to Room ${roomId}</div>
-        <div class="form-group" style="margin-top:0.75rem"><label>Title</label><input class="form-input readonly" id="atr-title" readonly></div>
-        <div class="form-group"><label>Author</label><input class="form-input readonly" id="atr-author" readonly></div>
-      </div>
-      <div id="atr-new" style="display:none">
-        <div class="form-info">✨ Creating a brand-new book and adding it to Room ${roomId}</div>
-        <div class="form-group" style="margin-top:0.75rem"><label>Title *</label>
-          <input class="form-input" id="atr-new-title" type="text" placeholder="Title…">
-          <div id="atr-warn"></div>
-        </div>
-        <div class="form-group"><label>Author *</label><input class="form-input" id="atr-new-author" type="text" placeholder="Author…"></div>
-        <div class="form-group"><label>Course</label>
-          <select class="form-select" id="atr-new-course">
-            ${COURSES.map(c=>`<option value="${c==='Unassigned'?'':c}">${c}</option>`).join('')}
-          </select>
-        </div>
-      </div>
-      <div class="form-group" id="atr-qty-wrap" style="display:none">
-        <label>Number of copies to add to Room ${roomId}</label>
-        <input class="form-input" id="atr-qty" type="number" min="1" value="1">
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="submitAddToRoom('${roomId}')">Add to Room ${roomId}</button>
-    </div>
-  </div>`, box=>{
-    acSel=null; acMode='search';
-    const inp=box.querySelector('#atr-q');
-    inp.addEventListener('input',()=>renderAC(inp.value,box));
-    inp.addEventListener('keydown',e=>acKeyNav(e,box));
-    inp.focus();
+  // Collect room quantities
+  const roomQtys = {};
+  ROOMS.forEach(r => {
+    const v = parseInt(document.getElementById('ab-qty-'+r)?.value) || 0;
+    if (v > 0) roomQtys[r] = v;
   });
-}
 
-function renderAC(q, box) {
-  acSel=null;
-  ['#atr-existing','#atr-new','#atr-qty-wrap'].forEach(s=>box.querySelector(s).style.display='none');
-  const list=box.querySelector('#atr-list');
-  if(q.length<2){ list.classList.remove('open'); return; }
-  const ql=q.toLowerCase();
-  const matches=S.books.filter(b=>b.title.toLowerCase().includes(ql)||b.author.toLowerCase().includes(ql)).slice(0,10);
-  list.innerHTML=matches.map((b,i)=>`
-    <div class="autocomplete-item" data-idx="${i}" onmousedown="acPick('${b.book_id}',event,document.querySelector('.modal'))">
-      <div class="item-title">${esc(b.title)}</div>
-      <div class="item-author">${esc(b.author)}</div>
-    </div>`).join('')+
-    `<div class="autocomplete-item create-new" onmousedown="acNew('${esc(q)}',event,document.querySelector('.modal'))">
-      ✨ Create "${esc(q)}" as a new book
-    </div>`;
-  list.classList.add('open');
-}
-
-function acPick(bookId, e, box) {
-  e.preventDefault();
-  const b=S.books.find(b=>b.book_id===bookId); if(!b) return;
-  acSel=b; acMode='existing';
-  box.querySelector('#atr-q').value=`${b.title} — ${b.author}`;
-  box.querySelector('#atr-list').classList.remove('open');
-  box.querySelector('#atr-title').value=b.title;
-  box.querySelector('#atr-author').value=b.author;
-  box.querySelector('#atr-existing').style.display='block';
-  box.querySelector('#atr-new').style.display='none';
-  box.querySelector('#atr-qty-wrap').style.display='block';
-}
-
-function acNew(q, e, box) {
-  e.preventDefault();
-  acSel=null; acMode='new';
-  box.querySelector('#atr-list').classList.remove('open');
-  box.querySelector('#atr-existing').style.display='none';
-  box.querySelector('#atr-new').style.display='block';
-  box.querySelector('#atr-qty-wrap').style.display='block';
-  const ti=box.querySelector('#atr-new-title');
-  ti.value=q;
-  ti.addEventListener('input',ev=>checkDupe(ev.target.value,box.querySelector('#atr-new-author').value,'atr-warn'));
-}
-
-function acKeyNav(e, box) {
-  const items=box.querySelectorAll('.autocomplete-item');
-  let hi=parseInt(box.dataset.hi||'-1');
-  if(e.key==='ArrowDown'){ hi=Math.min(hi+1,items.length-1); }
-  else if(e.key==='ArrowUp'){ hi=Math.max(hi-1,0); }
-  else if(e.key==='Enter'&&hi>=0){ items[hi].dispatchEvent(new MouseEvent('mousedown')); e.preventDefault(); return; }
-  box.dataset.hi=hi;
-  items.forEach((it,i)=>it.classList.toggle('highlighted',i===hi));
-}
-
-async function submitAddToRoom(roomId) {
-  const qty=parseInt(document.getElementById('atr-qty')?.value)||0;
-  if(qty<=0){ toast('Enter a quantity','warning'); return; }
-
-  if(acMode==='existing'&&acSel) {
-    const newQty=invQty(roomId,acSel.book_id)+qty;
-    try {
-      await apiPost({action:'updateInventory',room_id:roomId,book_id:acSel.book_id,quantity:newQty});
-      const inv=S.inventory.find(r=>r.room_id===roomId&&r.book_id===acSel.book_id);
-      if(inv) inv.quantity=newQty; else S.inventory.push({room_id:roomId,book_id:acSel.book_id,quantity:newQty,updated_at:now()});
-      updateCounts(); closeModal();
-      toast(`Added ${qty} cop${qty>1?'ies':'y'} of "${acSel.title}" to Room ${roomId}`,'success');
-      renderView();
-    } catch(err){ toast('Failed: '+err.message,'error'); }
-  } else if(acMode==='new') {
-    const title=document.getElementById('atr-new-title').value.trim();
-    const author=document.getElementById('atr-new-author').value.trim();
-    const course=document.getElementById('atr-new-course')?.value||'';
-    if(!title){ toast('Title required','warning'); return; }
-    if(!author){ toast('Author required','warning'); return; }
-    const ex=S.books.find(b=>bKey(b.title,b.author)===bKey(title,author));
-    if(ex){
-      confirmDialog(`"${esc(title)}" already exists. Add ${qty} cop${qty>1?'ies':'y'} to Room ${roomId} using that existing record?`, async ()=>{
-        const nq=invQty(roomId,ex.book_id)+qty;
-        await apiPost({action:'updateInventory',room_id:roomId,book_id:ex.book_id,quantity:nq});
-        const inv=S.inventory.find(r=>r.room_id===roomId&&r.book_id===ex.book_id);
-        if(inv) inv.quantity=nq; else S.inventory.push({room_id:roomId,book_id:ex.book_id,quantity:nq,updated_at:now()});
-        updateCounts(); closeModal(); toast('Added to room','success'); renderView();
-      },false); return;
-    }
-    await doAddBook(title,author,roomId,qty,course);
-  } else {
-    toast('Search for a book or create a new one','warning');
+  if (Object.keys(roomQtys).length === 0) {
+    document.getElementById('ab-room-hint').style.display = 'block';
+    toast('Assign at least one copy to a room','warning');
+    return;
   }
-}
 
-async function doAddBook(title, author, roomId, qty, course='') {
+  // Check for duplicate
+  const ex = S.books.find(b => bKey(b.title,b.author) === bKey(title,author));
+  if (ex) {
+    // Book exists — just add the room quantities
+    confirmDialog(
+      `"${esc(title)}" already exists in the catalog.<br><br>Add the specified copies to the selected rooms using the existing record?`,
+      async () => {
+        try {
+          const updates = Object.entries(roomQtys).map(([room_id, qty]) => ({
+            room_id, book_id: ex.book_id,
+            quantity: invQty(room_id, ex.book_id) + qty
+          }));
+          await apiPost({ action: 'updateInventoryBatch', updates });
+          updates.forEach(u => {
+            const inv = S.inventory.find(i => i.room_id===u.room_id && i.book_id===u.book_id);
+            if (inv) inv.quantity = u.quantity;
+            else S.inventory.push({ room_id: u.room_id, book_id: u.book_id, quantity: u.quantity, updated_at: now() });
+          });
+          updateCounts(); closeModal();
+          toast(`Copies of "${title}" added to ${Object.keys(roomQtys).length} room${Object.keys(roomQtys).length>1?'s':''}`, 'success');
+          renderView();
+        } catch(err) { toast('Failed: '+err.message,'error'); }
+      }, false
+    );
+    return;
+  }
+
+  // New book — create and assign to rooms
   try {
-    const book_id=genId();
-    const d=await apiPost({action:'addBook',book_id,title:title.trim(),author:author.trim(),course:course||'',room_id:roomId||null,quantity:qty});
-    const bid=d.book_id||book_id;
-    if(!S.books.find(b=>b.book_id===bid)) S.books.push({book_id:bid,title:title.trim(),author:author.trim(),course:course||'',created_at:now(),updated_at:now()});
-    if(roomId&&qty>0){
-      const inv=S.inventory.find(r=>r.room_id===roomId&&r.book_id===bid);
-      if(inv) inv.quantity=Number(inv.quantity)+qty;
-      else S.inventory.push({room_id:roomId,book_id:bid,quantity:qty,updated_at:now()});
-    }
+    const book_id = genId();
+    // Create the book first (with first room assignment for backward compat)
+    const firstRoom = Object.keys(roomQtys)[0];
+    const d = await apiPost({ action:'addBook', book_id, title, author, course: course||'', room_id: null, quantity: 0 });
+    const bid = d.book_id || book_id;
+    if (!S.books.find(b=>b.book_id===bid)) S.books.push({ book_id: bid, title, author, course: course||'', created_at: now(), updated_at: now() });
+
+    // Now batch-assign all rooms
+    const updates = Object.entries(roomQtys).map(([room_id, qty]) => ({ room_id, book_id: bid, quantity: qty }));
+    await apiPost({ action: 'updateInventoryBatch', updates });
+    updates.forEach(u => {
+      S.inventory.push({ room_id: u.room_id, book_id: u.book_id, quantity: u.quantity, updated_at: now() });
+    });
+
     updateCounts(); closeModal();
-    toast(`"${title}" added${roomId?` to Room ${roomId}`:'to catalog'}`,'success');
+    const roomList = Object.entries(roomQtys).map(([r,q])=>`${r}: ${q}`).join(', ');
+    toast(`"${title}" added — ${roomList}`, 'success');
     renderView();
-  } catch(err){ toast('Failed: '+err.message,'error'); }
+  } catch(err) { toast('Failed: '+err.message,'error'); }
 }
 
 // ── TRANSFER COPIES ───────────────────────────────────────
