@@ -393,6 +393,13 @@ function bindTabEvents() {
   renderTabs();
 }
 
+// ── COURSE BADGE ─────────────────────────────────────────
+function courseBadge(course) {
+  const c = course || 'Unassigned';
+  const isUnassigned = !course || course === 'Unassigned';
+  return `<span class="course-badge${isUnassigned?' unassigned':''}">${esc(c)}</span>`;
+}
+
 // ── ALL BOOKS ────────────────────────────────────────────
 function renderAll() {
   const q=S.search.toLowerCase();
