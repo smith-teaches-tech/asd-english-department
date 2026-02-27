@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASD English Department</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:    #1a2e4a;
+      --navy-d:  #0f1e30;
+      --navy-l:  #243a5e;
+      --navy-xl: #2e4a74;
+      --gold:    #c9a43b;
+      --gold-l:  #e8c96a;
+      --gold-d:  #a8852a;
+      --cream:   #f8f6f1;
+      --cream-d: #f0ece3;
+      --surface: #ffffff;
+      --border:  #ddd8ce;
+      --text:    #1c2b3a;
+      --muted:   #7a8898;
+      --radius:  10px;
+      --shadow:  0 2px 16px rgba(26,46,74,0.09);
+      --shadow-lg: 0 8px 40px rgba(26,46,74,0.16);
+    }
+
+    html { font-size: 15px; scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── HERO ───────────────────────────────────── */
+    .hero {
+      background: linear-gradient(160deg, var(--navy-d) 0%, var(--navy) 55%, var(--navy-l) 100%);
+      color: #fff;
+      padding: 0 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Decorative geometric background */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 80% at 95% 50%, rgba(201,164,59,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 60% at 5% 80%, rgba(255,255,255,0.04) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+    .hero-rule {
+      position: absolute;
+      right: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+      opacity: 0.6;
+    }
+
+    .hero-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 4rem 0 3.5rem;
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      gap: 2rem;
+    }
+
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .hero-eyebrow-line {
+      width: 32px;
+      height: 2px;
+      background: var(--gold);
+    }
+    .hero-eyebrow span {
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold-l);
+      font-weight: 500;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.15;
+      color: #fff;
+      margin-bottom: 0.75rem;
+    }
+    .hero h1 em {
+      font-style: italic;
+      color: var(--gold-l);
+    }
+    .hero-subtitle {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.6);
+      font-weight: 300;
+      max-width: 440px;
+      line-height: 1.6;
+    }
+
+    .hero-badge {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      text-align: right;
+      white-space: nowrap;
+    }
+    .hero-badge .school {
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold-l);
+      margin-bottom: 0.25rem;
+    }
+    .hero-badge .location {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* ── NAV STRIP ──────────────────────────────── */
+    .nav-strip {
+      background: var(--navy-d);
+      border-top: 1px solid rgba(255,255,255,0.07);
+      border-bottom: 1px solid rgba(0,0,0,0.2);
+    }
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      gap: 0.25rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-inner::-webkit-scrollbar { display: none; }
+    .nav-link {
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      padding: 0.65rem 0.9rem;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: color 150ms, border-color 150ms;
+    }
+    .nav-link:hover { color: rgba(255,255,255,0.85); }
+    .nav-link.active { color: var(--gold-l); border-bottom-color: var(--gold); }
+
+    /* ── MAIN ───────────────────────────────────── */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    /* ── SECTION ────────────────────────────────── */
+    .section { margin-bottom: 3rem; }
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--border);
+      position: relative;
+    }
+    .section-header::after {
+      content: '';
+      position: absolute;
+      left: 0; bottom: -2px;
+      width: 48px; height: 2px;
+      background: var(--gold);
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .section-icon {
+      font-size: 1rem;
+      opacity: 0.7;
+    }
+    .section-edit-hint {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    /* ── TOOLS GRID ─────────────────────────────── */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+    .tool-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      box-shadow: var(--shadow);
+      transition: transform 150ms, box-shadow 150ms, border-color 150ms;
+      position: relative;
+      overflow: hidden;
+    }
+    .tool-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--navy), var(--navy-xl));
+      opacity: 0;
+      transition: opacity 150ms;
+    }
+    .tool-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--navy-l);
+    }
+    .tool-card:hover::before { opacity: 1; }
+    .tool-card.placeholder {
+      border-style: dashed;
+      border-color: var(--border);
+      background: transparent;
+      cursor: default;
+      opacity: 0.65;
+    }
+    .tool-card.placeholder:hover {
+      transform: none;
+      box-shadow: var(--shadow);
+      border-color: var(--border);
+    }
+    .tool-card.placeholder::before { display: none; }
+
+    .tool-emoji {
+      font-size: 1.6rem;
+      line-height: 1;
+    }
+    .tool-name {
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: var(--navy);
+      line-height: 1.3;
+    }
+    .tool-desc {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.5;
+      flex: 1;
+    }
+    .tool-badge {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.5rem;
+      border-radius: 20px;
+      width: fit-content;
+    }
+    .badge-live { background: #e6f4ec; color: var(--success, #27794e); }
+    .badge-soon { background: #f5f5f5; color: #999; }
+
+    /* ── DOCUMENTS GRID ─────────────────────────── */
+    .docs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 0.75rem;
+    }
+    .doc-row {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.85rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: var(--shadow);
+      transition: background 150ms, border-color 150ms, transform 150ms;
+    }
+    .doc-row:hover {
+      background: var(--cream);
+      border-color: var(--navy-l);
+      transform: translateX(3px);
+    }
+    .doc-row.placeholder {
+      border-style: dashed;
+      opacity: 0.55;
+      cursor: default;
+    }
+    .doc-row.placeholder:hover {
+      background: var(--surface);
+      border-color: var(--border);
+      transform: none;
+    }
+    .doc-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: var(--cream-d);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .doc-info { flex: 1; min-width: 0; }
+    .doc-name {
+      font-weight: 500;
+      font-size: 0.88rem;
+      color: var(--navy);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .doc-meta {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 0.1rem;
+    }
+    .doc-arrow {
+      color: var(--muted);
+      font-size: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    /* ── CURRICULUM MAP TABLE ───────────────────── */
+    .curriculum-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 0.75rem;
+    }
+    .curriculum-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .curriculum-card-header {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-l) 100%);
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .curriculum-course {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #fff;
+    }
+    .curriculum-level {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: rgba(201,164,59,0.3);
+      color: var(--gold-l);
+      border: 1px solid rgba(201,164,59,0.4);
+      padding: 0.15rem 0.5rem;
+      border-radius: 20px;
+    }
+    .curriculum-links {
+      padding: 0.5rem 0;
+    }
+    .curriculum-link {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.5rem 1rem;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 0.82rem;
+      transition: background 150ms;
+      border-bottom: 1px solid var(--border);
+    }
+    .curriculum-link:last-child { border-bottom: none; }
+    .curriculum-link:hover { background: var(--cream); }
+    .curriculum-link.placeholder {
+      color: var(--muted);
+      font-style: italic;
+      cursor: default;
+    }
+    .curriculum-link.placeholder:hover { background: none; }
+    .curriculum-link-icon { font-size: 0.85rem; opacity: 0.6; }
+
+    /* ── FOOTER ─────────────────────────────────── */
+    footer {
+      background: var(--navy-d);
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.75rem;
+    }
+    footer a { color: var(--gold-l); text-decoration: none; }
+
+    /* ── ANIMATIONS ─────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero-inner        { animation: fadeUp 0.5s ease both; }
+    .section:nth-child(1) { animation: fadeUp 0.5s 0.1s ease both; }
+    .section:nth-child(2) { animation: fadeUp 0.5s 0.2s ease both; }
+    .section:nth-child(3) { animation: fadeUp 0.5s 0.3s ease both; }
+    .section:nth-child(4) { animation: fadeUp 0.5s 0.4s ease both; }
+
+    @media (max-width: 640px) {
+      .hero-inner { grid-template-columns: 1fr; padding: 2.5rem 0 2rem; }
+      .hero-badge { display: none; }
+      .tools-grid { grid-template-columns: 1fr 1fr; }
+      .docs-grid, .curriculum-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-rule"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-eyebrow">
+        <div class="hero-eyebrow-line"></div>
+        <span>American School of Dhahran</span>
+      </div>
+      <h1>English<br><em>Department</em></h1>
+      <p class="hero-subtitle">Resources, tools, and curriculum materials for the ASD English Department faculty.</p>
+    </div>
+    <div class="hero-badge">
+      <div class="school">ASD · Dhahran, KSA</div>
+      <div class="location">English Department Hub</div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV STRIP -->
+<nav class="nav-strip">
+  <div class="nav-inner">
+    <a class="nav-link active" href="#tools">Tools & Apps</a>
+    <a class="nav-link" href="#documents">Documents</a>
+    <a class="nav-link" href="#handbook">Handbook</a>
+    <a class="nav-link" href="#curriculum">Curriculum Maps</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main>
+
+  <!-- ── SECTION 1: TOOLS & APPS ─────────────────── -->
+  <section class="section" id="tools">
+    <div class="section-header">
+      <h2 class="section-title">
+        <span class="section-icon">🛠</span> Department Tools & Apps
+      </h2>
+      <span class="section-edit-hint">Edit index.html to add more tools</span>
+    </div>
+    <div class="tools-grid">
+
+      <!-- LIVE: Library App -->
+      <a class="tool-card" href="library/">
+        <div class="tool-emoji">📚</div>
+        <div class="tool-name">Department Library</div>
+        <div class="tool-desc">Browse and manage the English Department book inventory across all classrooms.</div>
+        <span class="tool-badge badge-live">● Live</span>
+      </a>
+
+      <!-- PLACEHOLDERS — replace href="#" and update text -->
+      <a class="tool-card placeholder" href="#">
+        <div class="tool-emoji">📝</div>
+        <div class="tool-name">Coming Soon</div>
+        <div class="tool-desc">Add your next tool here. Replace this card in index.html.</div>
+        <span class="tool-badge badge-soon">Coming Soon</span>
+      </a>
+
+      <a class="tool-card placeholder" href="#">
+        <div class="tool-emoji">🎯</div>
+        <div class="tool-name">Coming Soon</div>
+        <div class="tool-desc">Add your next tool here. Replace this card in index.html.</div>
+        <span class="tool-badge badge-soon">Coming Soon</span>
+      </a>
+
+      <a class="tool-card placeholder" href="#">
+        <div class="tool-emoji">📊</div>
+        <div class="tool-name">Coming Soon</div>
+        <div class="tool-desc">Add your next tool here. Replace this card in index.html.</div>
+        <span class="tool-badge badge-soon">Coming Soon</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ── SECTION 2: IMPORTANT DOCUMENTS ──────────── -->
+  <section class="section" id="documents">
+    <div class="section-header">
+      <h2 class="section-title">
+        <span class="section-icon">📂</span> Important Documents & Links
+      </h2>
+      <span class="section-edit-hint">Replace href="#" with your actual links</span>
+    </div>
+    <div class="docs-grid">
+
+      <!-- Replace each href="#" with your actual Google Drive / link URL -->
+      <a class="doc-row placeholder" href="#">
+        <div class="doc-icon">📄</div>
+        <div class="doc-info">
+          <div class="doc-name">Document Title Here</div>
+          <div class="doc-meta">Google Doc · replace with real link</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+      <a class="doc-row placeholder" href="#">
+        <div class="doc-icon">📋</div>
+        <div class="doc-info">
+          <div class="doc-name">Document Title Here</div>
+          <div class="doc-meta">Google Sheet · replace with real link</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+      <a class="doc-row placeholder" href="#">
+        <div class="doc-icon">🔗</div>
+        <div class="doc-info">
+          <div class="doc-name">Link Title Here</div>
+          <div class="doc-meta">External link · replace with real URL</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+      <a class="doc-row placeholder" href="#">
+        <div class="doc-icon">📊</div>
+        <div class="doc-info">
+          <div class="doc-name">Document Title Here</div>
+          <div class="doc-meta">Google Slides · replace with real link</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+      <a class="doc-row placeholder" href="#">
+        <div class="doc-icon">📁</div>
+        <div class="doc-info">
+          <div class="doc-name">Document Title Here</div>
+          <div class="doc-meta">Drive Folder · replace with real link</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+      <a class="doc-row placeholder" href="#">
+        <div class="doc-icon">📌</div>
+        <div class="doc-info">
+          <div class="doc-name">Document Title Here</div>
+          <div class="doc-meta">Replace with real link</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ── SECTION 3: DEPARTMENT HANDBOOK ──────────── -->
+  <section class="section" id="handbook">
+    <div class="section-header">
+      <h2 class="section-title">
+        <span class="section-icon">📖</span> Department Handbook
+      </h2>
+      <span class="section-edit-hint">Replace href="#" with your handbook links</span>
+    </div>
+    <div class="docs-grid">
+
+      <a class="doc-row placeholder" href="#">
+        <div class="doc-icon">📖</div>
+        <div class="doc-info">
+          <div class="doc-name">Full Department Handbook</div>
+          <div class="doc-meta">Replace with real link</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+      <a class="doc-row placeholder" href="#">
+        <div class="doc-icon">📋</div>
+        <div class="doc-info">
+          <div class="doc-name">Grading & Assessment Policy</div>
+          <div class="doc-meta">Replace with real link</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+      <a class="doc-row placeholder" href="#">
+        <div class="doc-icon">🗓</div>
+        <div class="doc-info">
+          <div class="doc-name">Academic Integrity Policy</div>
+          <div class="doc-meta">Replace with real link</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+      <a class="doc-row placeholder" href="#">
+        <div class="doc-icon">📝</div>
+        <div class="doc-info">
+          <div class="doc-name">Style Guide & Writing Standards</div>
+          <div class="doc-meta">Replace with real link</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+      <a class="doc-row placeholder" href="#">
+        <div class="doc-icon">🧑‍🏫</div>
+        <div class="doc-info">
+          <div class="doc-name">New Teacher Onboarding</div>
+          <div class="doc-meta">Replace with real link</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+      <a class="doc-row placeholder" href="#">
+        <div class="doc-icon">📌</div>
+        <div class="doc-info">
+          <div class="doc-name">Department Meeting Notes</div>
+          <div class="doc-meta">Replace with real link</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ── SECTION 4: CURRICULUM MAPS ──────────────── -->
+  <section class="section" id="curriculum">
+    <div class="section-header">
+      <h2 class="section-title">
+        <span class="section-icon">🗺</span> English Department Curriculum Maps
+      </h2>
+      <span class="section-edit-hint">Add course links below each course header</span>
+    </div>
+    <div class="curriculum-grid">
+
+      <div class="curriculum-card">
+        <div class="curriculum-card-header">
+          <span class="curriculum-course">AP Language & Composition</span>
+          <span class="curriculum-level">AP</span>
+        </div>
+        <div class="curriculum-links">
+          <a class="curriculum-link placeholder" href="#">
+            <span class="curriculum-link-icon">📄</span> Year-at-a-Glance
+          </a>
+          <a class="curriculum-link placeholder" href="#">
+            <span class="curriculum-link-icon">🗓</span> Unit Plans
+          </a>
+          <a class="curriculum-link placeholder" href="#">
+            <span class="curriculum-link-icon">📊</span> Assessment Overview
+          </a>
+        </div>
+      </div>
+
+      <div class="curriculum-card">
+        <div class="curriculum-card-header">
+          <span class="curriculum-course">AP Research</span>
+          <span class="curriculum-level">AP</span>
+        </div>
+        <div class="curriculum-links">
+          <a class="curriculum-link placeholder" href="#">
+            <span class="curriculum-link-icon">📄</span> Year-at-a-Glance
+          </a>
+          <a class="curriculum-link placeholder" href="#">
+            <span class="curriculum-link-icon">🗓</span> Unit Plans
+          </a>
+          <a class="curriculum-link placeholder" href="#">
+            <span class="curriculum-link-icon">📊</span> Assessment Overview
+          </a>
+        </div>
+      </div>
+
+      <div class="curriculum-card">
+        <div class="curriculum-card-header">
+          <span class="curriculum-course">IB English A: Language & Literature</span>
+          <span class="curriculum-level">IB</span>
+        </div>
+        <div class="curriculum-links">
+          <a class="curriculum-link placeholder" href="#">
+            <span class="curriculum-link-icon">📄</span> Year-at-a-Glance
+          </a>
+          <a class="curriculum-link placeholder" href="#">
+            <span class="curriculum-link-icon">🗓</span> Unit Plans
+          </a>
+          <a class="curriculum-link placeholder" href="#">
+            <span class="curriculum-link-icon">📊</span> Assessment Overview
+          </a>
+        </div>
+      </div>
+
+      <div class="curriculum-card">
+        <div class="curriculum-card-header">
+          <span class="curriculum-course">IB Theory of Knowledge</span>
+          <span class="curriculum-level">IB</span>
+        </div>
+        <div class="curriculum-links">
+          <a class="curriculum-link placeholder" href="#">
+            <span class="curriculum-link-icon">📄</span> Year-at-a-Glance
+          </a>
+          <a class="curriculum-link placeholder" href="#">
+            <span class="curriculum-link-icon">🗓</span> Unit Plans
+          </a>
+          <a class="curriculum-link placeholder" href="#">
+            <span class="curriculum-link-icon">📊</span> Assessment Overview
+          </a>
+        </div>
+      </div>
+
+      <div class="curriculum-card">
+        <div class="curriculum-card-header">
+          <span class="curriculum-course">English 9 / 10</span>
+          <span class="curriculum-level">Core</span>
+        </div>
+        <div class="curriculum-links">
+          <a class="curriculum-link placeholder" href="#">
+            <span class="curriculum-link-icon">📄</span> Year-at-a-Glance
+          </a>
+          <a class="curriculum-link placeholder" href="#">
+            <span class="curriculum-link-icon">🗓</span> Unit Plans
+          </a>
+          <a class="curriculum-link placeholder" href="#">
+            <span class="curriculum-link-icon">📊</span> Assessment Overview
+          </a>
+        </div>
+      </div>
+
+      <div class="curriculum-card">
+        <div class="curriculum-card-header">
+          <span class="curriculum-course">English 11 / 12</span>
+          <span class="curriculum-level">Core</span>
+        </div>
+        <div class="curriculum-links">
+          <a class="curriculum-link placeholder" href="#">
+            <span class="curriculum-link-icon">📄</span> Year-at-a-Glance
+          </a>
+          <a class="curriculum-link placeholder" href="#">
+            <span class="curriculum-link-icon">🗓</span> Unit Plans
+          </a>
+          <a class="curriculum-link placeholder" href="#">
+            <span class="curriculum-link-icon">📊</span> Assessment Overview
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <p>ASD English Department · American School of Dhahran · <a href="library/">Department Library</a></p>
+</footer>
+
+<script>
+  // Smooth active nav highlighting on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-link');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
