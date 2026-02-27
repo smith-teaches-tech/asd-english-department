@@ -111,6 +111,10 @@
     .td-qty { text-align: center; }
     .td-locations { font-size: 0.78rem; color: var(--muted); }
     .qty-badge { display: inline-flex; align-items: center; justify-content: center; background: var(--cream); border: 1px solid var(--border); border-radius: 20px; padding: 0.15rem 0.6rem; font-size: 0.8rem; font-weight: 600; color: var(--navy); min-width: 36px; }
+    .course-badge { display: inline-block; font-size: 0.7rem; font-weight: 500; padding: 0.18rem 0.55rem; border-radius: 20px; background: #e8f0fb; color: #2a4a8a; border: 1px solid #c0d0f0; white-space: nowrap; }
+    .course-badge.unassigned { background: var(--cream); color: var(--muted); border-color: var(--border); }
+    .course-select { padding: 0.55rem 0.75rem; border: 1.5px solid var(--border); border-radius: var(--radius); font-family: 'DM Sans', sans-serif; font-size: 0.85rem; background: var(--surface); color: var(--text); cursor: pointer; }
+    .course-select:focus { outline: none; border-color: var(--navy-l); }
     .qty-badge.changed { background: #fff8e0; border-color: var(--gold); color: #7a5800; }
     .actions-cell { display: flex; gap: 0.3rem; align-items: center; justify-content: flex-end; }
 
@@ -237,13 +241,14 @@
 // ── CONFIG ──────────────────────────────────────────────
 const SCRIPT_URL = 'https://script.google.com/a/macros/isg.edu.sa/s/AKfycbwIGNR_91Wj3CqmX-gZ51QcvoVISLvfd0gs2zRekIzyQQygnb0aJLhxXA_By8hyRC7z/exec';
 const ROOMS = ['A-2-3','A-2-4','A-2-5','A-2-6','A-2-7','A-2-8','A-2-9','A-2-10'];
+const COURSES = ['Unassigned','English 9','English 10','English 11','English 12','AP Language and Composition','AP Literature and Composition','Elective','IB English'];
 
 // ── STATE ────────────────────────────────────────────────
 const S = {
   books: [], rooms: [], inventory: [],
-  tab: 'all', search: '', sortField: 'title', sortDir: 'asc',
+  tab: 'all', search: '', sortField: 'title', sortDir: 'asc', courseFilter: '',
   mode: 'view',  // 'view' | 'edit' | 'recount'
-configured: SCRIPT_URL !== 'YOUR_APPS_SCRIPT_URL_HERE'
+  configured: SCRIPT_URL !== 'YOUR_APPS_SCRIPT_URL_HERE'
 };
 // Pending qty edits: { "roomId|bookId": newQty }
 const pending = {};
@@ -489,7 +494,7 @@ function renderRoom(roomId) {
     }
 
     return `<tr>
-      <td class="td-title">${esc(b.title)}</td>
+      <td class="td-title">${esc(b.title)}<br><span style="font-size:0.72rem">${courseBadge(b.course)}</span></td>
       <td class="td-author">${esc(b.author)}</td>
       <td class="td-qty">${qtyCell}</td>
       ${actionCell}
@@ -703,6 +708,12 @@ function openAddToCatalogModal() {
       </div>
       <div class="form-group"><label>Author *</label>
         <input class="form-input" id="ac-author" type="text" placeholder="Author name…"></div>
+      <div class="form-group"><label>Course</label>
+        <select class="form-select" id="ac-course">
+          ${COURSES.map(c=>`<option value="${c==='Unassigned'?'':c}">${c}</option>`).join('')}
+        </select>
+        <div class="form-hint">Restrict this book to a specific course, or leave as Unassigned.</div>
+      </div>
       <hr class="divider">
       <div class="form-group"><label>Also add to a room now? (optional)</label>
         <select class="form-select" id="ac-room">
@@ -738,13 +749,14 @@ function checkDupe(title,author,warnId) {
 async function submitAddToCatalog() {
   const title=document.getElementById('ac-title').value;
   const author=document.getElementById('ac-author').value;
+  const course=document.getElementById('ac-course').value;
   const room=document.getElementById('ac-room').value;
   const qty=parseInt(document.getElementById('ac-qty')?.value)||1;
   if(!title.trim()){ toast('Title is required','warning'); return; }
   if(!author.trim()){ toast('Author is required','warning'); return; }
   const ex=S.books.find(b=>bKey(b.title,b.author)===bKey(title,author));
   if(ex){ toast('This book already exists in the catalog','warning'); return; }
-  await doAddBook(title,author,room||null,qty);
+  await doAddBook(title,author,room||null,qty,course);
 }
 
 // ── ADD BOOKS TO ROOM (room tab) ──────────────────────────
@@ -779,6 +791,11 @@ function openAddToRoomModal(roomId) {
           <div id="atr-warn"></div>
         </div>
         <div class="form-group"><label>Author *</label><input class="form-input" id="atr-new-author" type="text" placeholder="Author…"></div>
+        <div class="form-group"><label>Course</label>
+          <select class="form-select" id="atr-new-course">
+            ${COURSES.map(c=>`<option value="${c==='Unassigned'?'':c}">${c}</option>`).join('')}
+          </select>
+        </div>
       </div>
       <div class="form-group" id="atr-qty-wrap" style="display:none">
         <label>Number of copies to add to Room ${roomId}</label>
@@ -868,6 +885,7 @@ async function submitAddToRoom(roomId) {
   } else if(acMode==='new') {
     const title=document.getElementById('atr-new-title').value.trim();
     const author=document.getElementById('atr-new-author').value.trim();
+    const course=document.getElementById('atr-new-course')?.value||'';
     if(!title){ toast('Title required','warning'); return; }
     if(!author){ toast('Author required','warning'); return; }
     const ex=S.books.find(b=>bKey(b.title,b.author)===bKey(title,author));
@@ -880,18 +898,18 @@ async function submitAddToRoom(roomId) {
         updateCounts(); closeModal(); toast('Added to room','success'); renderView();
       },false); return;
     }
-    await doAddBook(title,author,roomId,qty);
+    await doAddBook(title,author,roomId,qty,course);
   } else {
     toast('Search for a book or create a new one','warning');
   }
 }
 
-async function doAddBook(title, author, roomId, qty) {
+async function doAddBook(title, author, roomId, qty, course='') {
   try {
     const book_id=genId();
-    const d=await apiPost({action:'addBook',book_id,title:title.trim(),author:author.trim(),room_id:roomId||null,quantity:qty});
+    const d=await apiPost({action:'addBook',book_id,title:title.trim(),author:author.trim(),course:course||'',room_id:roomId||null,quantity:qty});
     const bid=d.book_id||book_id;
-    if(!S.books.find(b=>b.book_id===bid)) S.books.push({book_id:bid,title:title.trim(),author:author.trim(),created_at:now(),updated_at:now()});
+    if(!S.books.find(b=>b.book_id===bid)) S.books.push({book_id:bid,title:title.trim(),author:author.trim(),course:course||'',created_at:now(),updated_at:now()});
     if(roomId&&qty>0){
       const inv=S.inventory.find(r=>r.room_id===roomId&&r.book_id===bid);
       if(inv) inv.quantity=Number(inv.quantity)+qty;
