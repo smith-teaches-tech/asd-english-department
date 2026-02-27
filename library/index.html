@@ -486,7 +486,7 @@ function renderRoom(roomId) {
   let books = S.books.filter(b=>{
     const qty=invQty(roomId,b.book_id);
     if(qty<=0) return false;
-    return !q || b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q);
+    return true; // search handled by dropdown, not table filter
   });
   books=sortBooks(books);
 
@@ -534,7 +534,7 @@ function renderRoom(roomId) {
       qtyCell=`<span class="qty-badge">${qty}</span>`;
     }
 
-    return `<tr>
+    return `<tr data-book-id="${b.book_id}">
       <td class="td-title">${esc(b.title)}<br><span style="font-size:0.72rem">${courseBadge(b.course)}</span></td>
       <td class="td-author">${esc(b.author)}</td>
       <td class="td-qty">${qtyCell}</td>
@@ -543,7 +543,7 @@ function renderRoom(roomId) {
   }).join('') : `<tr><td colspan="${mode==='edit'?4:3}">
     <div class="empty-state">
       <h3>No books in this room</h3>
-      <p>${q?'Try a different search.':'Use "Add Books Here" to add books to this room.'}</p>
+      <p>Use "Add Books Here" to add books to this room.</p>
     </div></td></tr>`;
 
   const colSpan = mode==='edit' ? 4 : 3;
@@ -560,6 +560,7 @@ function renderRoom(roomId) {
       <div class="search-wrap">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         <input class="search-input" id="search-input" type="search" placeholder="Search books in this room…" autocomplete="off">
+        <div class="search-dropdown" id="search-dropdown"></div>
       </div>
     </div>
     <div class="table-wrap"><table>
@@ -1071,7 +1072,12 @@ function initSearchDropdown(inp) {
     const dd = document.getElementById('search-dropdown');
     if (!dd) return;
     if (q.length < 2) { dd.classList.remove('open'); dd.innerHTML=''; return; }
-    const matches = S.books.filter(b =>
+    // If on a room tab, only show books in that room
+    const roomId = S.tab !== 'all' ? S.tab : null;
+    const pool = roomId
+      ? S.books.filter(b => invQty(roomId, b.book_id) > 0)
+      : S.books;
+    const matches = pool.filter(b =>
       b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q)
     ).slice(0, 12);
     if (!matches.length) {
