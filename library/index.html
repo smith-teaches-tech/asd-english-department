@@ -510,7 +510,7 @@ function renderRoom(roomId) {
     }
 
     return `<tr>
-      <td class="td-title">${esc(b.title)}<br><span style="font-size:0.72rem;cursor:pointer" onclick="openCourseEdit('${b.book_id}',this)">${courseBadge(b.course)}</span></td>
+      <td class="td-title">${esc(b.title)}<br><span style="font-size:0.72rem">${courseBadge(b.course)}</span></td>
       <td class="td-author">${esc(b.author)}</td>
       <td class="td-qty">${qtyCell}</td>
       ${actionCell}
