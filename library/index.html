@@ -62,6 +62,27 @@
     .search-wrap svg { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
     .search-input { width: 100%; padding: 0.55rem 0.75rem 0.55rem 2.25rem; border: 1.5px solid var(--border); border-radius: var(--radius); font-family: 'DM Sans', sans-serif; font-size: 0.88rem; background: var(--surface); color: var(--text); transition: border-color var(--t), box-shadow var(--t); }
     .search-input:focus { outline: none; border-color: var(--navy-l); box-shadow: 0 0 0 3px rgba(26,46,74,0.1); }
+    .search-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: var(--surface); border: 1.5px solid var(--navy-l); border-top: none; border-radius: 0 0 var(--radius) var(--radius); max-height: 280px; overflow-y: auto; z-index: 150; box-shadow: var(--shadow-lg); display: none; }
+    .search-dropdown.open { display: block; }
+    .search-dropdown-item { padding: 0.55rem 0.85rem; cursor: pointer; border-bottom: 1px solid var(--border); transition: background var(--t); display: flex; align-items: baseline; gap: 0.5rem; }
+    .search-dropdown-item:last-child { border-bottom: none; }
+    .search-dropdown-item:hover, .search-dropdown-item.hi { background: var(--cream); }
+    .search-dropdown-item .sd-title { font-weight: 500; font-size: 0.88rem; }
+    .search-dropdown-item .sd-author { font-size: 0.75rem; color: var(--muted); }
+    .search-dropdown-empty { padding: 0.75rem; font-size: 0.85rem; color: var(--muted); text-align: center; }
+    @keyframes rowHighlight { 0%{background:#fff8d6} 60%{background:#fff8d6} 100%{background:transparent} }
+    .row-highlight { animation: rowHighlight 2s ease forwards; }
+    td.td-title-link { cursor: pointer; }
+    td.td-title-link:hover .book-title-text { text-decoration: underline; color: var(--navy-l); }
+    .book-popover { position: fixed; background: var(--surface); border: 1.5px solid var(--navy-l); border-radius: var(--radius); box-shadow: var(--shadow-lg); z-index: 200; min-width: 240px; max-width: 300px; overflow: hidden; }
+    .book-popover-header { padding: 0.6rem 0.85rem; background: var(--navy); color: #fff; }
+    .book-popover-header .bp-title { font-family: 'Playfair Display', serif; font-size: 0.9rem; font-weight: 600; line-height: 1.3; }
+    .book-popover-header .bp-author { font-size: 0.72rem; color: rgba(255,255,255,0.6); margin-top: 0.15rem; }
+    .book-popover-row { display: flex; align-items: center; justify-content: space-between; padding: 0.45rem 0.85rem; border-bottom: 1px solid var(--border); font-size: 0.83rem; }
+    .book-popover-row:last-child { border-bottom: none; }
+    .book-popover-room { color: var(--muted); font-size: 0.78rem; }
+    .book-popover-qty { font-weight: 600; color: var(--navy); background: var(--cream); border: 1px solid var(--border); border-radius: 20px; padding: 0.1rem 0.5rem; font-size: 0.78rem; }
+    .book-popover-empty { padding: 0.75rem; font-size: 0.82rem; color: var(--muted); text-align: center; font-style: italic; }
 
     /* BUTTONS */
     .btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.55rem 1rem; border-radius: var(--radius); font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500; cursor: pointer; border: 1.5px solid transparent; transition: all var(--t); white-space: nowrap; }
@@ -384,10 +405,11 @@ function renderView() {
     S.tab === 'all' ? renderAll() : renderRoom(S.tab);
   // Restore search input without stealing focus
   const si = document.getElementById('search-input');
-  if (si) { si.value = prevSearch; si.addEventListener('input', e=>{ S.search=e.target.value; debounceRender(); }); }
+  if (si) { si.value = prevSearch; initSearchDropdown(si); }
   document.querySelectorAll('th[data-sort]').forEach(th => th.addEventListener('click', ()=>{
     const f=th.dataset.sort;
-    if(S.sortField===f) S.sortDir=S.sortDir==='asc'?'desc':'asc'; else { S.sortField=f; S.sortDir='asc'; }
+    if(S.sortField===f) { S.sortDir=S.sortDir==='asc'?'desc':'asc'; }
+    else { S.sortField=f; S.sortDir = f==='qty' ? 'desc' : 'asc'; } // qty defaults highest first
     renderView();
   }));
 }
@@ -418,8 +440,10 @@ function renderAll() {
   const configBanner = !S.configured ? `<div class="config-banner"><strong>⚙ Setup Required</strong>Set <code>SCRIPT_URL</code> in index.html to your Apps Script URL.</div>` : '';
 
   const rows = books.length ? books.map(b=>`
-    <tr>
-      <td class="td-title">${esc(b.title)}</td>
+    <tr data-book-id="${b.book_id}">
+      <td class="td-title td-title-link" onclick="openBookPopover('${b.book_id}',event)">
+        <span class="book-title-text">${esc(b.title)}</span>
+      </td>
       <td class="td-author">${esc(b.author)}</td>
       <td><span onclick="openCourseEdit('${b.book_id}',this)" style="cursor:pointer">${courseBadge(b.course)}</span></td>
       <td class="td-qty"><span class="qty-badge">${totalQty(b.book_id)}</span></td>
@@ -434,6 +458,7 @@ function renderAll() {
       <div class="search-wrap">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         <input class="search-input" id="search-input" type="search" placeholder="Search title or author…" autocomplete="off">
+        <div class="search-dropdown" id="search-dropdown"></div>
       </div>
       <button class="btn btn-primary" onclick="openAddToCatalogModal()">＋ New Book to Catalog</button>
       <button class="btn btn-secondary" onclick="openImportModal()">⬆ Import CSV</button>
@@ -1030,6 +1055,121 @@ function openCourseEdit(bookId, triggerEl) {
       } catch(err) { toast('Failed: ' + err.message, 'error'); }
     });
   });
+  setTimeout(() => {
+    document.addEventListener('click', function handler(e) {
+      if (!popover.contains(e.target)) { popover.remove(); document.removeEventListener('click', handler); }
+    });
+  }, 50);
+}
+
+// ── SEARCH DROPDOWN ──────────────────────────────────────
+function initSearchDropdown(inp) {
+  let hiIdx = -1;
+  inp.addEventListener('input', () => {
+    hiIdx = -1;
+    const q = inp.value.trim().toLowerCase();
+    const dd = document.getElementById('search-dropdown');
+    if (!dd) return;
+    if (q.length < 2) { dd.classList.remove('open'); dd.innerHTML=''; return; }
+    const matches = S.books.filter(b =>
+      b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q)
+    ).slice(0, 12);
+    if (!matches.length) {
+      dd.innerHTML = '<div class="search-dropdown-empty">No matches found</div>';
+      dd.classList.add('open'); return;
+    }
+    dd.innerHTML = matches.map((b,i) =>
+      `<div class="search-dropdown-item" data-book-id="${b.book_id}" data-idx="${i}">
+        <span class="sd-title">${esc(b.title)}</span>
+        <span class="sd-author">${esc(b.author)}</span>
+      </div>`
+    ).join('');
+    dd.classList.add('open');
+    dd.querySelectorAll('.search-dropdown-item').forEach(item => {
+      item.addEventListener('mousedown', e => {
+        e.preventDefault();
+        selectSearchResult(item.dataset.bookId, inp, dd);
+      });
+    });
+  });
+  inp.addEventListener('keydown', e => {
+    const dd = document.getElementById('search-dropdown');
+    if (!dd || !dd.classList.contains('open')) return;
+    const items = dd.querySelectorAll('.search-dropdown-item');
+    if (e.key === 'ArrowDown') { hiIdx=Math.min(hiIdx+1,items.length-1); highlightDDItem(items,hiIdx); e.preventDefault(); }
+    else if (e.key === 'ArrowUp') { hiIdx=Math.max(hiIdx-1,0); highlightDDItem(items,hiIdx); e.preventDefault(); }
+    else if (e.key === 'Enter' && hiIdx>=0) { selectSearchResult(items[hiIdx].dataset.bookId, inp, dd); e.preventDefault(); }
+    else if (e.key === 'Escape') { dd.classList.remove('open'); inp.value=''; }
+  });
+  inp.addEventListener('blur', () => {
+    setTimeout(() => {
+      const dd = document.getElementById('search-dropdown');
+      if (dd) dd.classList.remove('open');
+    }, 150);
+  });
+}
+
+function highlightDDItem(items, idx) {
+  items.forEach((it,i) => it.classList.toggle('hi', i===idx));
+}
+
+function selectSearchResult(bookId, inp, dd) {
+  const book = S.books.find(b => b.book_id === bookId);
+  if (!book) return;
+  inp.value = '';
+  if (dd) { dd.classList.remove('open'); dd.innerHTML = ''; }
+  // Find the row in the table and scroll to it
+  const row = document.querySelector(`tr[data-book-id="${bookId}"]`);
+  if (row) {
+    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    row.classList.add('row-highlight');
+    setTimeout(() => row.classList.remove('row-highlight'), 2000);
+  } else {
+    // Book exists but may be filtered out — reset filters and try again
+    S.search = ''; S.courseFilter = '';
+    const cfEl = document.getElementById('course-filter');
+    if (cfEl) cfEl.value = '';
+    renderView();
+    setTimeout(() => {
+      const r2 = document.querySelector(`tr[data-book-id="${bookId}"]`);
+      if (r2) { r2.scrollIntoView({ behavior: 'smooth', block: 'center' }); r2.classList.add('row-highlight'); setTimeout(()=>r2.classList.remove('row-highlight'),2000); }
+    }, 150);
+  }
+}
+
+// ── BOOK POPOVER (title click) ────────────────────────────
+function openBookPopover(bookId, event) {
+  event.stopPropagation();
+  const existing = document.getElementById('book-popover');
+  if (existing) { existing.remove(); return; }
+  const book = S.books.find(b => b.book_id === bookId);
+  if (!book) return;
+  const roomRows = ROOMS.map(r => {
+    const qty = S.inventory.find(i=>i.room_id===r&&i.book_id===bookId);
+    const q = qty ? Number(qty.quantity) : 0;
+    if (q <= 0) return null;
+    const t = teacher(r);
+    return `<div class="book-popover-row">
+      <span><span class="book-popover-room">${r}</span>${t?' · <em style="font-size:0.75rem;color:var(--muted)">'+esc(t)+'</em>':''}</span>
+      <span class="book-popover-qty">${q}</span>
+    </div>`;
+  }).filter(Boolean).join('');
+
+  const popover = document.createElement('div');
+  popover.className = 'book-popover';
+  popover.id = 'book-popover';
+  popover.innerHTML = `
+    <div class="book-popover-header">
+      <div class="bp-title">${esc(book.title)}</div>
+      <div class="bp-author">${esc(book.author)}</div>
+    </div>
+    ${roomRows || '<div class="book-popover-empty">Not assigned to any room</div>'}`;
+
+  const rect = event.currentTarget.getBoundingClientRect();
+  popover.style.top  = (rect.bottom + window.scrollY + 4) + 'px';
+  popover.style.left = Math.min(rect.left + window.scrollX, window.innerWidth - 310) + 'px';
+  document.body.appendChild(popover);
+
   setTimeout(() => {
     document.addEventListener('click', function handler(e) {
       if (!popover.contains(e.target)) { popover.remove(); document.removeEventListener('click', handler); }
