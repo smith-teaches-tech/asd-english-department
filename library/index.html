@@ -1,1 +1,1753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASD English Department Library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --navy:    #1a2e4a;
+      --navy-d:  #0f1e30;
+      --navy-l:  #243a5e;
+      --gold:    #c9a43b;
+      --gold-l:  #e8c96a;
+      --cream:   #f8f6f1;
+      --surface: #ffffff;
+      --border:  #ddd8ce;
+      --text:    #1c2b3a;
+      --muted:   #7a8898;
+      --danger:  #c0392b;
+      --success: #27794e;
+      --radius:  8px;
+      --shadow:  0 2px 12px rgba(26,46,74,0.10);
+      --shadow-lg: 0 8px 32px rgba(26,46,74,0.18);
+      --transition: 150ms ease;
+    }
+
+    html { font-size: 15px; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HEADER ─────────────────────────────────── */
+    header {
+      background: linear-gradient(135deg, var(--navy-d) 0%, var(--navy) 100%);
+      color: #fff;
+      padding: 0 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.25);
+    }
+    .header-inner {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+    }
+    .header-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+    .header-brand .eyebrow {
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold-l);
+      font-weight: 500;
+    }
+    .header-brand h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.01em;
+      line-height: 1.2;
+    }
+    .header-status {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.55);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #6dce8e;
+      display: inline-block;
+    }
+    .status-dot.loading { background: var(--gold-l); animation: pulse 1s infinite; }
+    .status-dot.error   { background: #e07070; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    /* ── TABS ────────────────────────────────────── */
+    .tabs-bar {
+      background: var(--navy-d);
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .tabs-inner {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs-inner::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.55);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      padding: 0.65rem 1rem;
+      cursor: pointer;
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      transition: color var(--transition), border-color var(--transition);
+    }
+    .tab-btn:hover { color: rgba(255,255,255,0.85); }
+    .tab-btn.active {
+      color: var(--gold-l);
+      border-bottom-color: var(--gold);
+    }
+
+    /* ── MAIN CONTENT ────────────────────────────── */
+    main {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* ── TOOLBAR ─────────────────────────────────── */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+    }
+    .search-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 200px;
+    }
+    .search-wrap svg {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
+    .search-input {
+      width: 100%;
+      padding: 0.55rem 0.75rem 0.55rem 2.25rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      background: var(--surface);
+      color: var(--text);
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: var(--navy-l);
+      box-shadow: 0 0 0 3px rgba(26,46,74,0.1);
+    }
+    .sort-select {
+      padding: 0.55rem 0.75rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+    }
+    .sort-select:focus { outline: none; border-color: var(--navy-l); }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 1rem;
+      border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: var(--navy);
+      color: #fff;
+      border-color: var(--navy);
+    }
+    .btn-primary:hover { background: var(--navy-l); border-color: var(--navy-l); }
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--navy);
+      border-color: var(--border);
+    }
+    .btn-secondary:hover { background: var(--cream); border-color: var(--navy); }
+    .btn-ghost {
+      background: none;
+      color: var(--muted);
+      border-color: transparent;
+      padding: 0.4rem 0.6rem;
+    }
+    .btn-ghost:hover { color: var(--text); background: rgba(0,0,0,0.05); }
+    .btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+    .btn-danger:hover { background: #a93226; border-color: #a93226; }
+    .btn-edit-toggle {
+      background: none;
+      color: var(--gold);
+      border-color: var(--gold);
+    }
+    .btn-edit-toggle:hover, .btn-edit-toggle.active {
+      background: var(--gold);
+      color: #fff;
+    }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    /* ── ROOM HEADER ─────────────────────────────── */
+    .room-header {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      box-shadow: var(--shadow);
+    }
+    .room-header-left h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      color: var(--navy);
+    }
+    .room-header-left .teacher-display {
+      font-size: 0.83rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+    .teacher-edit-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .inline-input {
+      padding: 0.35rem 0.6rem;
+      border: 1.5px solid var(--border);
+      border-radius: 5px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      color: var(--text);
+      min-width: 180px;
+    }
+    .inline-input:focus { outline: none; border-color: var(--navy-l); }
+
+    /* ── TABLE ───────────────────────────────────── */
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    thead {
+      background: var(--navy);
+      color: #fff;
+    }
+    thead th {
+      padding: 0.7rem 1rem;
+      text-align: left;
+      font-weight: 500;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    thead th.sortable { cursor: pointer; user-select: none; }
+    thead th.sortable:hover { background: var(--navy-l); }
+    thead th .sort-icon { margin-left: 0.3rem; opacity: 0.5; }
+    thead th.sorted .sort-icon { opacity: 1; color: var(--gold-l); }
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background var(--transition);
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(26,46,74,0.03); }
+    tbody td {
+      padding: 0.65rem 1rem;
+      color: var(--text);
+      vertical-align: middle;
+    }
+    .td-title { font-weight: 500; }
+    .td-author { color: var(--muted); }
+    .td-qty {
+      font-weight: 600;
+      color: var(--navy);
+      text-align: center;
+    }
+    .td-locations { font-size: 0.78rem; color: var(--muted); }
+    .qty-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 0.15rem 0.6rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--navy);
+      min-width: 36px;
+    }
+    .actions-cell {
+      display: flex;
+      gap: 0.3rem;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    .qty-control {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .qty-btn {
+      width: 26px; height: 26px;
+      border-radius: 5px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 1rem;
+      line-height: 1;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition);
+    }
+    .qty-btn:hover { background: var(--navy); color: #fff; border-color: var(--navy); }
+    .qty-input {
+      width: 52px;
+      text-align: center;
+      padding: 0.25rem 0.3rem;
+      border: 1.5px solid var(--border);
+      border-radius: 5px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+    .qty-input:focus { outline: none; border-color: var(--navy-l); }
+
+    /* ── EMPTY STATE ─────────────────────────────── */
+    .empty-state {
+      padding: 3.5rem 1rem;
+      text-align: center;
+      color: var(--muted);
+    }
+    .empty-state svg { margin-bottom: 0.75rem; opacity: 0.35; }
+    .empty-state p { font-size: 0.9rem; }
+    .empty-state h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--navy);
+      margin-bottom: 0.35rem;
+    }
+
+    /* ── LOADING ─────────────────────────────────── */
+    .loading-overlay {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 1rem;
+      gap: 1rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--navy);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── MODALS ──────────────────────────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10,20,35,0.55);
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 200ms ease;
+    }
+    .modal-overlay.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .modal {
+      background: var(--surface);
+      border-radius: 12px;
+      box-shadow: var(--shadow-lg);
+      width: 100%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: translateY(16px);
+      transition: transform 200ms ease;
+    }
+    .modal-overlay.visible .modal { transform: translateY(0); }
+    .modal.wide { max-width: 600px; }
+    .modal-header {
+      padding: 1.25rem 1.5rem 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .modal-header h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      color: var(--navy);
+    }
+    .modal-body { padding: 1rem 1.5rem; }
+    .modal-footer {
+      padding: 0.75rem 1.5rem 1.25rem;
+      display: flex;
+      gap: 0.6rem;
+      justify-content: flex-end;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      padding: 0.1rem;
+      line-height: 1;
+      font-size: 1.25rem;
+      transition: color var(--transition);
+    }
+    .modal-close:hover { color: var(--text); }
+
+    /* Form fields */
+    .form-group { margin-bottom: 1rem; }
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+    }
+    .form-input, .form-select {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      color: var(--text);
+      background: var(--surface);
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: var(--navy-l);
+      box-shadow: 0 0 0 3px rgba(26,46,74,0.08);
+    }
+    .form-input.readonly {
+      background: var(--cream);
+      color: var(--muted);
+      cursor: not-allowed;
+    }
+    .form-hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+    .form-warning {
+      background: #fff8e1;
+      border: 1px solid #f0c040;
+      border-radius: 6px;
+      padding: 0.6rem 0.75rem;
+      font-size: 0.8rem;
+      color: #8a6200;
+      margin-top: 0.4rem;
+    }
+
+    /* Search autocomplete */
+    .autocomplete-wrap { position: relative; }
+    .autocomplete-list {
+      position: absolute;
+      top: 100%;
+      left: 0; right: 0;
+      background: var(--surface);
+      border: 1.5px solid var(--navy-l);
+      border-top: none;
+      border-radius: 0 0 var(--radius) var(--radius);
+      max-height: 220px;
+      overflow-y: auto;
+      z-index: 50;
+      box-shadow: var(--shadow);
+      display: none;
+    }
+    .autocomplete-list.open { display: block; }
+    .autocomplete-item {
+      padding: 0.55rem 0.75rem;
+      cursor: pointer;
+      font-size: 0.85rem;
+      border-bottom: 1px solid var(--border);
+      transition: background var(--transition);
+    }
+    .autocomplete-item:last-child { border-bottom: none; }
+    .autocomplete-item:hover, .autocomplete-item.highlighted { background: var(--cream); }
+    .autocomplete-item .item-title { font-weight: 500; }
+    .autocomplete-item .item-author { color: var(--muted); font-size: 0.78rem; }
+    .autocomplete-item.create-new {
+      color: var(--navy);
+      font-weight: 500;
+      font-style: italic;
+    }
+
+    /* ── TOAST ───────────────────────────────────── */
+    #toast-container {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .toast {
+      background: var(--navy-d);
+      color: #fff;
+      padding: 0.65rem 1rem;
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      max-width: 320px;
+      animation: slideIn 250ms ease;
+    }
+    .toast.success { background: var(--success); }
+    .toast.error   { background: var(--danger); }
+    .toast.warning { background: #a07800; }
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to   { transform: translateX(0); opacity: 1; }
+    }
+
+    /* ── CONFIRM DIALOG ──────────────────────────── */
+    .confirm-modal { max-width: 380px; }
+    .confirm-body { padding: 1.25rem 1.5rem; color: var(--text); font-size: 0.9rem; line-height: 1.6; }
+
+    /* ── CSV PREVIEW ─────────────────────────────── */
+    .csv-preview {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.75rem;
+      font-size: 0.78rem;
+      font-family: monospace;
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 0.5rem;
+    }
+    .csv-errors {
+      margin-top: 0.75rem;
+    }
+    .csv-error-item {
+      color: var(--danger);
+      font-size: 0.78rem;
+      padding: 0.2rem 0;
+    }
+    .import-stats {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+      background: #eef4fb;
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
+    }
+
+    /* ── MISC ────────────────────────────────────── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0.75rem 0;
+    }
+    .tab-count {
+      display: inline-block;
+      background: rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.7);
+      border-radius: 20px;
+      font-size: 0.68rem;
+      padding: 0.1rem 0.45rem;
+      margin-left: 0.3rem;
+      font-weight: 600;
+    }
+    .tab-btn.active .tab-count {
+      background: var(--gold);
+      color: var(--navy-d);
+    }
+    .config-banner {
+      background: #fff4e0;
+      border: 1px solid #f0c040;
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.88rem;
+      color: #6b4f00;
+    }
+    .config-banner strong { display: block; margin-bottom: 0.3rem; }
+    .config-banner code {
+      background: rgba(0,0,0,0.08);
+      padding: 0.1rem 0.35rem;
+      border-radius: 3px;
+      font-size: 0.82rem;
+    }
+
+    @media (max-width: 640px) {
+      main { padding: 1rem; }
+      .toolbar { gap: 0.5rem; }
+      .btn { font-size: 0.8rem; padding: 0.5rem 0.75rem; }
+      thead th { padding: 0.6rem 0.6rem; }
+      tbody td { padding: 0.55rem 0.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="header-brand">
+      <span class="eyebrow">American School of Dhahran</span>
+      <h1>English Department Library</h1>
+    </div>
+    <div class="header-status">
+      <span class="status-dot" id="status-dot"></span>
+      <span id="status-text">Loading…</span>
+    </div>
+  </div>
+</header>
+
+<!-- TABS -->
+<div class="tabs-bar">
+  <div class="tabs-inner" id="tabs-container">
+    <button class="tab-btn active" data-tab="all">
+      All Books <span class="tab-count" id="count-all">—</span>
+    </button>
+    <button class="tab-btn" data-tab="A-2-3">A-2-3 <span class="tab-count" id="count-A-2-3">—</span></button>
+    <button class="tab-btn" data-tab="A-2-4">A-2-4 <span class="tab-count" id="count-A-2-4">—</span></button>
+    <button class="tab-btn" data-tab="A-2-5">A-2-5 <span class="tab-count" id="count-A-2-5">—</span></button>
+    <button class="tab-btn" data-tab="A-2-6">A-2-6 <span class="tab-count" id="count-A-2-6">—</span></button>
+    <button class="tab-btn" data-tab="A-2-7">A-2-7 <span class="tab-count" id="count-A-2-7">—</span></button>
+    <button class="tab-btn" data-tab="A-2-8">A-2-8 <span class="tab-count" id="count-A-2-8">—</span></button>
+    <button class="tab-btn" data-tab="A-2-9">A-2-9 <span class="tab-count" id="count-A-2-9">—</span></button>
+    <button class="tab-btn" data-tab="A-2-10">A-2-10 <span class="tab-count" id="count-A-2-10">—</span></button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main id="main-content"></main>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal-box"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  CONFIGURATION — paste your Apps Script URL here
+// ═══════════════════════════════════════════════════════
+const SCRIPT_URL = 'https://script.google.com/a/macros/isg.edu.sa/s/AKfycbwIGNR_91Wj3CqmX-gZ51QcvoVISLvfd0gs2zRekIzyQQygnb0aJLhxXA_By8hyRC7z/exec';
+
+const ROOMS = ['A-2-3','A-2-4','A-2-5','A-2-6','A-2-7','A-2-8','A-2-9','A-2-10'];
+
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+const state = {
+  books: [],       // [{book_id, title, author, created_at, updated_at}]
+  rooms: [],       // [{room_id, teacher_name, updated_at}]
+  inventory: [],   // [{room_id, book_id, quantity, updated_at}]
+  currentTab: 'all',
+  search: '',
+  sortField: 'title',
+  sortDir: 'asc',
+  editMode: false,
+  loading: false,
+  configured: SCRIPT_URL !== 'YOUR_APPS_SCRIPT_URL_HERE'
+};
+
+// Pending quantity edits: { "roomId|bookId": qty }
+const pendingQty = {};
+
+// ═══════════════════════════════════════════════════════
+//  API
+// ═══════════════════════════════════════════════════════
+async function apiFetch(payload) {
+  if (!state.configured) {
+    throw new Error('Apps Script URL not configured. Edit index.html and set SCRIPT_URL.');
+  }
+  const res = await fetch(SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return data;
+}
+
+async function apiGet() {
+  if (!state.configured) return null;
+  const url = `${SCRIPT_URL}?action=getAll`;
+  const res = await fetch(url);
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return data;
+}
+
+// ═══════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════
+function normalizeText(s) {
+  return (s || '').trim().replace(/\s+/g, ' ').toLowerCase();
+}
+function bookKey(title, author) {
+  return normalizeText(title) + '||' + normalizeText(author);
+}
+function getInventoryQty(roomId, bookId) {
+  const row = state.inventory.find(r => r.room_id === roomId && r.book_id === bookId);
+  return row ? Number(row.quantity) : 0;
+}
+function getTotalQty(bookId) {
+  return state.inventory
+    .filter(r => r.book_id === bookId)
+    .reduce((s, r) => s + Number(r.quantity), 0);
+}
+function getLocations(bookId) {
+  return state.inventory
+    .filter(r => r.book_id === bookId && Number(r.quantity) > 0)
+    .map(r => `${r.room_id}: ${r.quantity}`)
+    .join(', ') || '—';
+}
+function getTeacher(roomId) {
+  const r = state.rooms.find(r => r.room_id === roomId);
+  return r ? (r.teacher_name || '') : '';
+}
+function generateId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+}
+
+// ═══════════════════════════════════════════════════════
+//  STATUS
+// ═══════════════════════════════════════════════════════
+function setStatus(type, text) {
+  const dot = document.getElementById('status-dot');
+  const txt = document.getElementById('status-text');
+  dot.className = 'status-dot ' + (type || '');
+  txt.textContent = text;
+}
+
+// ═══════════════════════════════════════════════════════
+//  TAB COUNTS
+// ═══════════════════════════════════════════════════════
+function updateCounts() {
+  const el = document.getElementById('count-all');
+  if (el) el.textContent = state.books.length;
+  ROOMS.forEach(r => {
+    const cnt = state.inventory.filter(inv => inv.room_id === r && Number(inv.quantity) > 0).length;
+    const el = document.getElementById(`count-${r}`);
+    if (el) el.textContent = cnt;
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════
+function toast(msg, type = 'default', duration = 3000) {
+  const icons = { success: '✓', error: '✕', warning: '⚠', default: 'ℹ' };
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<span>${icons[type] || icons.default}</span><span>${msg}</span>`;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => {
+    el.style.transition = 'opacity 300ms';
+    el.style.opacity = '0';
+    setTimeout(() => el.remove(), 300);
+  }, duration);
+}
+
+// ═══════════════════════════════════════════════════════
+//  MODAL
+// ═══════════════════════════════════════════════════════
+function openModal(html, onOpen) {
+  const overlay = document.getElementById('modal-overlay');
+  const box = document.getElementById('modal-box');
+  box.innerHTML = html;
+  overlay.classList.add('visible');
+  if (onOpen) onOpen(box);
+}
+function closeModal() {
+  const overlay = document.getElementById('modal-overlay');
+  overlay.classList.remove('visible');
+}
+document.getElementById('modal-overlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeModal();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// ═══════════════════════════════════════════════════════
+//  CONFIRM DIALOG
+// ═══════════════════════════════════════════════════════
+function confirmDialog(message, onConfirm, danger = true) {
+  openModal(`
+    <div class="modal confirm-modal">
+      <div class="modal-header">
+        <h3>Confirm</h3>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="confirm-body">${message}</div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn ${danger ? 'btn-danger' : 'btn-primary'}" id="confirm-ok">Confirm</button>
+      </div>
+    </div>
+  `);
+  document.getElementById('confirm-ok').onclick = () => { closeModal(); onConfirm(); };
+}
+
+// ═══════════════════════════════════════════════════════
+//  LOAD DATA
+// ═══════════════════════════════════════════════════════
+async function loadData() {
+  if (!state.configured) {
+    setStatus('error', 'Not configured');
+    renderView();
+    return;
+  }
+  setStatus('loading', 'Loading…');
+  try {
+    const data = await apiGet();
+    state.books = data.books || [];
+    state.rooms = data.rooms || [];
+    state.inventory = data.inventory || [];
+    updateCounts();
+    setStatus('', `${state.books.length} books`);
+    renderView();
+  } catch (err) {
+    setStatus('error', 'Error loading');
+    toast('Failed to load data: ' + err.message, 'error', 5000);
+    renderView();
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════════════
+function renderView() {
+  const main = document.getElementById('main-content');
+  if (state.currentTab === 'all') {
+    main.innerHTML = renderAllBooks();
+  } else {
+    main.innerHTML = renderRoomView(state.currentTab);
+  }
+  bindEvents();
+}
+
+function renderAllBooks() {
+  const q = state.search.toLowerCase();
+  let books = state.books.filter(b =>
+    !q || b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q)
+  );
+  books = sortBooks(books);
+
+  const configBanner = !state.configured ? `
+    <div class="config-banner">
+      <strong>⚙ Setup Required</strong>
+      Open <code>index.html</code> and replace <code>YOUR_APPS_SCRIPT_URL_HERE</code> with your deployed Apps Script URL.
+      See <code>README.md</code> for full setup instructions.
+    </div>` : '';
+
+  const rows = books.length ? books.map(b => `
+    <tr>
+      <td class="td-title">${esc(b.title)}</td>
+      <td class="td-author">${esc(b.author)}</td>
+      <td class="td-qty" style="text-align:center">
+        <span class="qty-badge">${getTotalQty(b.book_id)}</span>
+      </td>
+      <td class="td-locations">${getLocations(b.book_id)}</td>
+      <td>
+        <div class="actions-cell">
+          <button class="btn btn-ghost" title="Delete book" onclick="deleteBook('${b.book_id}')">🗑</button>
+        </div>
+      </td>
+    </tr>`).join('') : `
+    <tr><td colspan="5">
+      <div class="empty-state">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <h3>No books found</h3>
+        <p>${q ? 'Try a different search term.' : 'Add your first book to get started.'}</p>
+      </div>
+    </td></tr>`;
+
+  const sf = state.sortField, sd = state.sortDir;
+  function sortIcon(field) {
+    if (sf !== field) return `<span class="sort-icon">↕</span>`;
+    return `<span class="sort-icon">${sd === 'asc' ? '↑' : '↓'}</span>`;
+  }
+
+  return `
+    ${configBanner}
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="search-input" id="search-input" type="search" placeholder="Search title or author…" value="${esc(state.search)}" autocomplete="off">
+      </div>
+      <button class="btn btn-primary" onclick="openAddBookModal()">＋ Add Book</button>
+      <button class="btn btn-secondary" onclick="openImportModal()">⬆ Import CSV</button>
+      <button class="btn btn-secondary" onclick="exportCSV()">⬇ Export CSV</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="sortable ${sf==='title'?'sorted':''}" data-sort="title">Title ${sortIcon('title')}</th>
+            <th class="sortable ${sf==='author'?'sorted':''}" data-sort="author">Author ${sortIcon('author')}</th>
+            <th class="sortable ${sf==='qty'?'sorted':''}" data-sort="qty" style="text-align:center">Total Qty ${sortIcon('qty')}</th>
+            <th>Locations</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <p style="margin-top:0.75rem;font-size:0.78rem;color:var(--muted);text-align:right">${books.length} title${books.length!==1?'s':''}</p>
+  `;
+}
+
+function renderRoomView(roomId) {
+  const q = state.search.toLowerCase();
+  const teacher = getTeacher(roomId);
+  const editMode = state.editMode;
+
+  let books = state.books.filter(b => {
+    const qty = getInventoryQty(roomId, b.book_id);
+    if (qty <= 0 && !editMode) return false;
+    if (qty <= 0 && editMode) return false; // still hide 0-qty in edit mode unless adding
+    if (!q) return true;
+    return b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q);
+  });
+  books = sortBooks(books);
+
+  const teacherHtml = editMode ? `
+    <div class="teacher-edit-wrap">
+      <input class="inline-input" id="teacher-input" type="text" value="${esc(teacher)}" placeholder="Teacher name…">
+      <button class="btn btn-primary" onclick="saveTeacher('${roomId}')">Save</button>
+    </div>` : `
+    <div class="teacher-display">${teacher ? '👤 ' + esc(teacher) : '<em style="color:var(--muted)">No teacher assigned</em>'}</div>`;
+
+  const rows = books.length ? books.map(b => {
+    const qty = getInventoryQty(roomId, b.book_id);
+    const key = `${roomId}|${b.book_id}`;
+    const pendingVal = pendingQty[key] !== undefined ? pendingQty[key] : qty;
+    const qtyCell = editMode ? `
+      <div class="qty-control">
+        <button class="qty-btn" onclick="adjustQty('${roomId}','${b.book_id}',-1)">−</button>
+        <input class="qty-input" type="number" min="0" value="${pendingVal}" data-key="${key}"
+          onchange="onQtyChange(this,'${roomId}','${b.book_id}')">
+        <button class="qty-btn" onclick="adjustQty('${roomId}','${b.book_id}',1)">＋</button>
+      </div>` : `<span class="qty-badge">${qty}</span>`;
+    const actionCell = editMode ? `
+      <div class="actions-cell">
+        <button class="btn btn-secondary" style="font-size:0.78rem" onclick="openMoveModal('${roomId}','${b.book_id}')">Move</button>
+        <button class="btn btn-ghost" title="Remove from room" onclick="removeFromRoom('${roomId}','${b.book_id}')">✕</button>
+      </div>` : '';
+    return `
+      <tr>
+        <td class="td-title">${esc(b.title)}</td>
+        <td class="td-author">${esc(b.author)}</td>
+        <td class="td-qty">${qtyCell}</td>
+        ${editMode ? `<td>${actionCell}</td>` : ''}
+      </tr>`;
+  }).join('') : `
+    <tr><td colspan="${editMode ? 4 : 3}">
+      <div class="empty-state">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M12 8v8"/></svg>
+        <h3>No books in this room</h3>
+        <p>${q ? 'Try a different search.' : 'Click "Edit Room" to add books.'}</p>
+      </div>
+    </td></tr>`;
+
+  const saveQtyBtn = editMode && Object.keys(pendingQty).length > 0 ? `
+    <button class="btn btn-primary" onclick="saveAllQty()">💾 Save Quantities</button>` : '';
+
+  return `
+    <div class="room-header">
+      <div class="room-header-left">
+        <h2>Room ${roomId}</h2>
+        ${teacherHtml}
+      </div>
+      <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap">
+        ${saveQtyBtn}
+        ${editMode ? `<button class="btn btn-primary" onclick="openAddToRoomModal('${roomId}')">＋ Add Book</button>` : ''}
+        <button class="btn btn-edit-toggle ${editMode ? 'active' : ''}" onclick="toggleEditMode()">
+          ${editMode ? '✓ Done Editing' : '✏ Edit Room'}
+        </button>
+      </div>
+    </div>
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="search-input" id="search-input" type="search" placeholder="Search title or author…" value="${esc(state.search)}" autocomplete="off">
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="sortable ${state.sortField==='title'?'sorted':''}" data-sort="title">Title</th>
+            <th class="sortable ${state.sortField==='author'?'sorted':''}" data-sort="author">Author</th>
+            <th style="text-align:center">Quantity</th>
+            ${editMode ? '<th></th>' : ''}
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <p style="margin-top:0.75rem;font-size:0.78rem;color:var(--muted);text-align:right">${books.length} title${books.length!==1?'s':''} in this room</p>
+  `;
+}
+
+function sortBooks(books) {
+  return [...books].sort((a, b) => {
+    let va, vb;
+    if (state.sortField === 'title')  { va = a.title.toLowerCase(); vb = b.title.toLowerCase(); }
+    else if (state.sortField === 'author') { va = a.author.toLowerCase(); vb = b.author.toLowerCase(); }
+    else { va = getTotalQty(a.book_id); vb = getTotalQty(b.book_id); }
+    if (va < vb) return state.sortDir === 'asc' ? -1 : 1;
+    if (va > vb) return state.sortDir === 'asc' ? 1 : -1;
+    return 0;
+  });
+}
+
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ═══════════════════════════════════════════════════════
+//  EVENT BINDING
+// ═══════════════════════════════════════════════════════
+function bindEvents() {
+  const si = document.getElementById('search-input');
+  if (si) {
+    si.addEventListener('input', e => { state.search = e.target.value; renderView(); });
+    si.focus();
+  }
+  document.querySelectorAll('th[data-sort]').forEach(th => {
+    th.addEventListener('click', () => {
+      const f = th.dataset.sort;
+      if (state.sortField === f) state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
+      else { state.sortField = f; state.sortDir = 'asc'; }
+      renderView();
+    });
+  });
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (state.editMode) state.editMode = false;
+      clearPending();
+      state.currentTab = btn.dataset.tab;
+      state.search = '';
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderView();
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  EDIT MODE
+// ═══════════════════════════════════════════════════════
+function toggleEditMode() {
+  if (state.editMode && Object.keys(pendingQty).length > 0) {
+    confirmDialog('You have unsaved quantity changes. Discard them?', () => {
+      clearPending();
+      state.editMode = false;
+      renderView();
+    });
+    return;
+  }
+  state.editMode = !state.editMode;
+  renderView();
+}
+function clearPending() {
+  Object.keys(pendingQty).forEach(k => delete pendingQty[k]);
+}
+
+// ═══════════════════════════════════════════════════════
+//  QUANTITY EDITING
+// ═══════════════════════════════════════════════════════
+function adjustQty(roomId, bookId, delta) {
+  const key = `${roomId}|${bookId}`;
+  const current = pendingQty[key] !== undefined ? pendingQty[key] : getInventoryQty(roomId, bookId);
+  pendingQty[key] = Math.max(0, current + delta);
+  const input = document.querySelector(`.qty-input[data-key="${key}"]`);
+  if (input) input.value = pendingQty[key];
+  renderSaveButton();
+}
+function onQtyChange(input, roomId, bookId) {
+  const key = `${roomId}|${bookId}`;
+  const val = Math.max(0, parseInt(input.value) || 0);
+  input.value = val;
+  pendingQty[key] = val;
+  renderSaveButton();
+}
+function renderSaveButton() {
+  // Re-render just the save button area
+  const existing = document.querySelector('.btn-primary[onclick="saveAllQty()"]');
+  const roomHeader = document.querySelector('.room-header > div:last-child');
+  if (!roomHeader) return;
+  if (Object.keys(pendingQty).length > 0 && !existing) {
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-primary';
+    btn.setAttribute('onclick', 'saveAllQty()');
+    btn.textContent = '💾 Save Quantities';
+    roomHeader.insertBefore(btn, roomHeader.firstChild);
+  }
+}
+
+async function saveAllQty() {
+  if (!state.configured) { toast('Not configured', 'error'); return; }
+  const updates = Object.entries(pendingQty).map(([key, qty]) => {
+    const [roomId, bookId] = key.split('|');
+    return { room_id: roomId, book_id: bookId, quantity: qty };
+  });
+  if (!updates.length) return;
+  try {
+    setStatus('loading', 'Saving…');
+    await apiFetch({ action: 'updateInventoryBatch', updates });
+    updates.forEach(u => {
+      const inv = state.inventory.find(r => r.room_id === u.room_id && r.book_id === u.book_id);
+      if (inv) inv.quantity = u.quantity;
+      else state.inventory.push({ room_id: u.room_id, book_id: u.book_id, quantity: u.quantity });
+    });
+    clearPending();
+    updateCounts();
+    setStatus('', `${state.books.length} books`);
+    toast('Quantities saved', 'success');
+    renderView();
+  } catch (err) {
+    setStatus('error', 'Save failed');
+    toast('Save failed: ' + err.message, 'error');
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  TEACHER NAME
+// ═══════════════════════════════════════════════════════
+async function saveTeacher(roomId) {
+  if (!state.configured) { toast('Not configured', 'error'); return; }
+  const name = document.getElementById('teacher-input').value.trim();
+  try {
+    await apiFetch({ action: 'updateTeacher', room_id: roomId, teacher_name: name });
+    const r = state.rooms.find(r => r.room_id === roomId);
+    if (r) r.teacher_name = name;
+    else state.rooms.push({ room_id: roomId, teacher_name: name });
+    toast('Teacher name saved', 'success');
+    renderView();
+  } catch (err) {
+    toast('Failed: ' + err.message, 'error');
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  REMOVE FROM ROOM
+// ═══════════════════════════════════════════════════════
+function removeFromRoom(roomId, bookId) {
+  const book = state.books.find(b => b.book_id === bookId);
+  confirmDialog(`Remove <strong>${esc(book?.title)}</strong> from Room ${roomId}?<br><small>This sets quantity to 0 in this room.</small>`, async () => {
+    try {
+      await apiFetch({ action: 'updateInventory', room_id: roomId, book_id: bookId, quantity: 0 });
+      const inv = state.inventory.find(r => r.room_id === roomId && r.book_id === bookId);
+      if (inv) inv.quantity = 0;
+      updateCounts();
+      toast('Removed from room', 'success');
+      renderView();
+    } catch (err) {
+      toast('Failed: ' + err.message, 'error');
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  DELETE BOOK (global)
+// ═══════════════════════════════════════════════════════
+function deleteBook(bookId) {
+  const book = state.books.find(b => b.book_id === bookId);
+  confirmDialog(`
+    <strong>Delete from database?</strong><br><br>
+    "${esc(book?.title)}" by ${esc(book?.author)}<br><br>
+    This will remove the book and all its inventory records permanently.
+  `, async () => {
+    try {
+      await apiFetch({ action: 'deleteBook', book_id: bookId });
+      state.books = state.books.filter(b => b.book_id !== bookId);
+      state.inventory = state.inventory.filter(r => r.book_id !== bookId);
+      updateCounts();
+      toast('Book deleted', 'success');
+      renderView();
+    } catch (err) {
+      toast('Delete failed: ' + err.message, 'error');
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  ADD BOOK (catalog, from All Books)
+// ═══════════════════════════════════════════════════════
+function openAddBookModal() {
+  openModal(`
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Add Book to Catalog</h3>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Title *</label>
+          <input class="form-input" id="ab-title" type="text" placeholder="Book title…" autocomplete="off">
+          <div class="form-hint" id="ab-title-warn"></div>
+        </div>
+        <div class="form-group">
+          <label>Author *</label>
+          <input class="form-input" id="ab-author" type="text" placeholder="Author name…">
+        </div>
+        <hr class="divider">
+        <div class="form-group">
+          <label>Add to room now (optional)</label>
+          <select class="form-select" id="ab-room">
+            <option value="">— No room —</option>
+            ${ROOMS.map(r => `<option value="${r}">${r}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group" id="ab-qty-group" style="display:none">
+          <label>Quantity</label>
+          <input class="form-input" id="ab-qty" type="number" min="1" value="1">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="submitAddBook()">Add Book</button>
+      </div>
+    </div>
+  `, box => {
+    box.querySelector('#ab-room').addEventListener('change', e => {
+      box.querySelector('#ab-qty-group').style.display = e.target.value ? 'block' : 'none';
+    });
+    box.querySelector('#ab-title').addEventListener('input', e => {
+      checkTitleWarning(e.target.value, box.querySelector('#ab-author').value);
+    });
+  });
+}
+
+function checkTitleWarning(title, author) {
+  const warn = document.getElementById('ab-title-warn');
+  if (!warn) return;
+  if (title !== title.trim()) {
+    warn.innerHTML = '<div class="form-warning">⚠ Title has leading or trailing spaces.</div>';
+    return;
+  }
+  const existing = state.books.find(b => bookKey(b.title, b.author) === bookKey(title, author));
+  if (existing) {
+    warn.innerHTML = `<div class="form-warning">⚠ A book with this title/author already exists.</div>`;
+  } else {
+    warn.innerHTML = '';
+  }
+}
+
+async function submitAddBook() {
+  if (!state.configured) { toast('Not configured', 'error'); return; }
+  const title = document.getElementById('ab-title').value;
+  const author = document.getElementById('ab-author').value;
+  const room = document.getElementById('ab-room').value;
+  const qty = parseInt(document.getElementById('ab-qty')?.value) || 1;
+
+  if (!title.trim()) { toast('Title is required', 'warning'); return; }
+  if (!author.trim()) { toast('Author is required', 'warning'); return; }
+
+  const existing = state.books.find(b => bookKey(b.title, b.author) === bookKey(title, author));
+  if (existing) {
+    confirmDialog(`A book titled "${esc(title)}" by ${esc(author)} already exists. Add anyway?`, async () => {
+      await doAddBook(title, author, room, qty);
+    }, false);
+    return;
+  }
+  await doAddBook(title, author, room, qty);
+}
+
+async function doAddBook(title, author, room, qty) {
+  try {
+    const book_id = generateId();
+    const data = await apiFetch({ action: 'addBook', book_id, title: title.trim(), author: author.trim(), room_id: room || null, quantity: qty });
+    state.books.push({ book_id: data.book_id || book_id, title: title.trim(), author: author.trim() });
+    if (room && qty > 0) {
+      state.inventory.push({ room_id: room, book_id: data.book_id || book_id, quantity: qty });
+    }
+    updateCounts();
+    closeModal();
+    toast('Book added', 'success');
+    renderView();
+  } catch (err) {
+    toast('Failed: ' + err.message, 'error');
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  ADD BOOK TO ROOM (with autocomplete)
+// ═══════════════════════════════════════════════════════
+let acHighlight = -1;
+let acMode = 'search'; // 'search' | 'new'
+let acSelected = null;
+
+function openAddToRoomModal(roomId) {
+  openModal(`
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Add Book to Room ${roomId}</h3>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Search existing books</label>
+          <div class="autocomplete-wrap">
+            <input class="form-input" id="atr-search" type="text" placeholder="Type title or author…" autocomplete="off">
+            <div class="autocomplete-list" id="atr-list"></div>
+          </div>
+        </div>
+        <div id="atr-selected" style="display:none">
+          <div class="form-group">
+            <label>Title</label>
+            <input class="form-input readonly" id="atr-title" type="text" readonly>
+          </div>
+          <div class="form-group">
+            <label>Author</label>
+            <input class="form-input readonly" id="atr-author" type="text" readonly>
+          </div>
+        </div>
+        <div id="atr-new" style="display:none">
+          <hr class="divider">
+          <p style="font-size:0.8rem;color:var(--muted);margin-bottom:0.75rem">Create a new book:</p>
+          <div class="form-group">
+            <label>Title *</label>
+            <input class="form-input" id="atr-new-title" type="text" placeholder="Title…">
+            <div class="form-hint" id="atr-title-warn"></div>
+          </div>
+          <div class="form-group">
+            <label>Author *</label>
+            <input class="form-input" id="atr-new-author" type="text" placeholder="Author…">
+          </div>
+        </div>
+        <div class="form-group" id="atr-qty-group" style="display:none">
+          <label>Quantity to add</label>
+          <input class="form-input" id="atr-qty" type="number" min="1" value="1">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="submitAddToRoom('${roomId}')">Add to Room</button>
+      </div>
+    </div>
+  `, box => {
+    acHighlight = -1; acMode = 'search'; acSelected = null;
+    const inp = box.querySelector('#atr-search');
+    const list = box.querySelector('#atr-list');
+    inp.addEventListener('input', () => renderAcList(inp.value, list, box));
+    inp.addEventListener('keydown', e => handleAcKey(e, list, box));
+  });
+}
+
+function renderAcList(q, list, box) {
+  acSelected = null;
+  box.querySelector('#atr-selected').style.display = 'none';
+  box.querySelector('#atr-new').style.display = 'none';
+  box.querySelector('#atr-qty-group').style.display = 'none';
+  if (q.length < 2) { list.classList.remove('open'); return; }
+  const ql = q.toLowerCase();
+  const matches = state.books.filter(b => b.title.toLowerCase().includes(ql) || b.author.toLowerCase().includes(ql)).slice(0, 10);
+  list.innerHTML = matches.map((b, i) => `
+    <div class="autocomplete-item" data-idx="${i}" onmousedown="selectBook('${b.book_id}',event)">
+      <div class="item-title">${esc(b.title)}</div>
+      <div class="item-author">${esc(b.author)}</div>
+    </div>`).join('') + `<div class="autocomplete-item create-new" onmousedown="selectCreateNew('${esc(q)}',event)">＋ Create "${esc(q)}" as new book</div>`;
+  list.classList.add('open');
+}
+
+function selectBook(bookId, e) {
+  e.preventDefault();
+  const book = state.books.find(b => b.book_id === bookId);
+  if (!book) return;
+  acSelected = book; acMode = 'search';
+  document.getElementById('atr-search').value = `${book.title} — ${book.author}`;
+  document.getElementById('atr-list').classList.remove('open');
+  document.getElementById('atr-title').value = book.title;
+  document.getElementById('atr-author').value = book.author;
+  document.getElementById('atr-selected').style.display = 'block';
+  document.getElementById('atr-new').style.display = 'none';
+  document.getElementById('atr-qty-group').style.display = 'block';
+}
+
+function selectCreateNew(q, e) {
+  e.preventDefault();
+  acSelected = null; acMode = 'new';
+  document.getElementById('atr-list').classList.remove('open');
+  document.getElementById('atr-selected').style.display = 'none';
+  document.getElementById('atr-new').style.display = 'block';
+  document.getElementById('atr-qty-group').style.display = 'block';
+  const titleInput = document.getElementById('atr-new-title');
+  titleInput.value = q;
+  titleInput.addEventListener('input', e => {
+    const authorInput = document.getElementById('atr-new-author');
+    checkDupeWarning(e.target.value, authorInput.value, 'atr-title-warn');
+  });
+}
+
+function checkDupeWarning(title, author, warnId) {
+  const warn = document.getElementById(warnId);
+  if (!warn) return;
+  if (title !== title.trim()) {
+    warn.innerHTML = '<div class="form-warning">⚠ Leading/trailing spaces detected.</div>';
+    return;
+  }
+  const ex = state.books.find(b => bookKey(b.title, b.author) === bookKey(title, author));
+  if (ex) warn.innerHTML = '<div class="form-warning">⚠ This title/author already exists in the catalog.</div>';
+  else warn.innerHTML = '';
+}
+
+function handleAcKey(e, list) {
+  const items = list.querySelectorAll('.autocomplete-item');
+  if (!items.length) return;
+  if (e.key === 'ArrowDown') { acHighlight = Math.min(acHighlight + 1, items.length - 1); highlightAc(items); e.preventDefault(); }
+  else if (e.key === 'ArrowUp') { acHighlight = Math.max(acHighlight - 1, 0); highlightAc(items); e.preventDefault(); }
+  else if (e.key === 'Enter' && acHighlight >= 0) { items[acHighlight].dispatchEvent(new MouseEvent('mousedown')); e.preventDefault(); }
+}
+function highlightAc(items) {
+  items.forEach((it, i) => it.classList.toggle('highlighted', i === acHighlight));
+}
+
+async function submitAddToRoom(roomId) {
+  if (!state.configured) { toast('Not configured', 'error'); return; }
+  const qty = parseInt(document.getElementById('atr-qty')?.value) || 0;
+  if (qty <= 0) { toast('Enter a quantity', 'warning'); return; }
+
+  if (acMode === 'search' && acSelected) {
+    // Update existing inventory
+    try {
+      const existingQty = getInventoryQty(roomId, acSelected.book_id);
+      const newQty = existingQty + qty;
+      await apiFetch({ action: 'updateInventory', room_id: roomId, book_id: acSelected.book_id, quantity: newQty });
+      const inv = state.inventory.find(r => r.room_id === roomId && r.book_id === acSelected.book_id);
+      if (inv) inv.quantity = newQty;
+      else state.inventory.push({ room_id: roomId, book_id: acSelected.book_id, quantity: newQty });
+      updateCounts();
+      closeModal();
+      toast(`Added ${qty} copy${qty>1?'ies':''} to Room ${roomId}`, 'success');
+      renderView();
+    } catch (err) { toast('Failed: ' + err.message, 'error'); }
+  } else if (acMode === 'new') {
+    const title = document.getElementById('atr-new-title').value.trim();
+    const author = document.getElementById('atr-new-author').value.trim();
+    if (!title) { toast('Title required', 'warning'); return; }
+    if (!author) { toast('Author required', 'warning'); return; }
+    const ex = state.books.find(b => bookKey(b.title, b.author) === bookKey(title, author));
+    if (ex) {
+      confirmDialog(`"${esc(title)}" by ${esc(author)} already exists. Add copies to Room ${roomId} using existing record?`, async () => {
+        const newQty = getInventoryQty(roomId, ex.book_id) + qty;
+        await apiFetch({ action: 'updateInventory', room_id: roomId, book_id: ex.book_id, quantity: newQty });
+        const inv = state.inventory.find(r => r.room_id === roomId && r.book_id === ex.book_id);
+        if (inv) inv.quantity = newQty;
+        else state.inventory.push({ room_id: roomId, book_id: ex.book_id, quantity: newQty });
+        updateCounts(); closeModal(); toast('Added to room', 'success'); renderView();
+      }, false);
+      return;
+    }
+    await doAddBook(title, author, roomId, qty);
+  } else {
+    toast('Select a book or create a new one', 'warning');
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  MOVE COPIES
+// ═══════════════════════════════════════════════════════
+function openMoveModal(fromRoomId, bookId) {
+  const book = state.books.find(b => b.book_id === bookId);
+  const available = getInventoryQty(fromRoomId, bookId);
+  const otherRooms = ROOMS.filter(r => r !== fromRoomId);
+  openModal(`
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Move Copies</h3>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Book</label>
+          <input class="form-input readonly" type="text" value="${esc(book?.title)} — ${esc(book?.author)}" readonly>
+        </div>
+        <div class="form-group">
+          <label>From Room</label>
+          <input class="form-input readonly" type="text" value="${fromRoomId} (${available} available)" readonly>
+        </div>
+        <div class="form-group">
+          <label>To Room</label>
+          <select class="form-select" id="move-to">
+            ${otherRooms.map(r => `<option value="${r}">${r}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Quantity to Move</label>
+          <input class="form-input" id="move-qty" type="number" min="1" max="${available}" value="1">
+          <div class="form-hint">Max: ${available}</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="submitMove('${fromRoomId}','${bookId}',${available})">Move</button>
+      </div>
+    </div>
+  `);
+}
+
+async function submitMove(fromRoomId, bookId, available) {
+  if (!state.configured) { toast('Not configured', 'error'); return; }
+  const toRoomId = document.getElementById('move-to').value;
+  const qty = parseInt(document.getElementById('move-qty').value) || 0;
+  if (qty <= 0) { toast('Enter a quantity', 'warning'); return; }
+  if (qty > available) { toast(`Only ${available} available`, 'warning'); return; }
+  try {
+    await apiFetch({ action: 'moveInventory', from_room: fromRoomId, to_room: toRoomId, book_id: bookId, quantity: qty });
+    // Update local state
+    const from = state.inventory.find(r => r.room_id === fromRoomId && r.book_id === bookId);
+    if (from) from.quantity = Number(from.quantity) - qty;
+    const to = state.inventory.find(r => r.room_id === toRoomId && r.book_id === bookId);
+    if (to) to.quantity = Number(to.quantity) + qty;
+    else state.inventory.push({ room_id: toRoomId, book_id: bookId, quantity: qty });
+    updateCounts();
+    closeModal();
+    toast(`Moved ${qty} copy${qty>1?'ies':''} to ${toRoomId}`, 'success');
+    renderView();
+  } catch (err) {
+    toast('Move failed: ' + err.message, 'error');
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  CSV EXPORT
+// ═══════════════════════════════════════════════════════
+function exportCSV() {
+  const lines = ['book_id,title,author,' + ROOMS.join(',')];
+  state.books.forEach(b => {
+    const qtys = ROOMS.map(r => getInventoryQty(r, b.book_id));
+    lines.push([b.book_id, csvQ(b.title), csvQ(b.author), ...qtys].join(','));
+  });
+  // Add teacher row
+  lines.push('');
+  lines.push('# Teachers');
+  lines.push('room_id,teacher_name');
+  state.rooms.forEach(r => {
+    if (r.teacher_name) lines.push(`${r.room_id},${csvQ(r.teacher_name)}`);
+  });
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url;
+  a.download = `asd-library-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+  toast('CSV exported', 'success');
+}
+function csvQ(s) {
+  if (String(s).includes(',') || String(s).includes('"') || String(s).includes('\n'))
+    return `"${String(s).replace(/"/g,'""')}"`;
+  return s;
+}
+
+// ═══════════════════════════════════════════════════════
+//  CSV IMPORT
+// ═══════════════════════════════════════════════════════
+function openImportModal() {
+  openModal(`
+    <div class="modal wide">
+      <div class="modal-header">
+        <h3>Import CSV</h3>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Expected format: book_id, title, author, ${ROOMS.join(', ')}</label>
+          <p class="form-hint">First row must be the header. book_id can be blank (will be generated). Teacher rows optional at end.</p>
+        </div>
+        <div class="form-group">
+          <label>Choose CSV file</label>
+          <input type="file" id="import-file" accept=".csv" style="font-size:0.85rem">
+        </div>
+        <div id="import-preview"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" id="import-commit" disabled onclick="commitImport()">Import</button>
+      </div>
+    </div>
+  `, box => {
+    box.querySelector('#import-file').addEventListener('change', e => parseImportFile(e.target.files[0]));
+  });
+}
+
+let importData = null;
+
+function parseImportFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const text = e.target.result;
+    const result = parseCSV(text);
+    importData = result;
+    renderImportPreview(result);
+  };
+  reader.readAsText(file);
+}
+
+function parseCSV(text) {
+  const lines = text.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
+  if (!lines.length) return { error: 'Empty file' };
+  const header = csvSplit(lines[0]).map(h => h.trim().toLowerCase());
+  const titleIdx = header.indexOf('title');
+  const authorIdx = header.indexOf('author');
+  const bookIdIdx = header.indexOf('book_id');
+  if (titleIdx < 0 || authorIdx < 0) return { error: 'Missing title or author column' };
+  const roomIdxMap = {};
+  ROOMS.forEach(r => { const i = header.indexOf(r.toLowerCase()); if (i >= 0) roomIdxMap[r] = i; });
+
+  const books = []; const errors = [];
+  for (let i = 1; i < lines.length; i++) {
+    const cols = csvSplit(lines[i]);
+    const title = (cols[titleIdx] || '').trim();
+    const author = (cols[authorIdx] || '').trim();
+    if (!title || !author) { errors.push(`Row ${i+1}: Missing title or author`); continue; }
+    const book_id = (bookIdIdx >= 0 ? cols[bookIdIdx] : '') || generateId();
+    const inventory = {};
+    Object.entries(roomIdxMap).forEach(([r, idx]) => {
+      const v = parseInt(cols[idx]) || 0;
+      if (v > 0) inventory[r] = v;
+    });
+    books.push({ book_id, title, author, inventory });
+  }
+  return { books, errors, header: lines[0] };
+}
+
+function csvSplit(line) {
+  const result = []; let cur = ''; let inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') { if (inQ && line[i+1] === '"') { cur += '"'; i++; } else inQ = !inQ; }
+    else if (c === ',' && !inQ) { result.push(cur); cur = ''; }
+    else cur += c;
+  }
+  result.push(cur);
+  return result;
+}
+
+function renderImportPreview(result) {
+  const preview = document.getElementById('import-preview');
+  const commitBtn = document.getElementById('import-commit');
+  if (result.error) {
+    preview.innerHTML = `<div class="form-warning">✕ ${result.error}</div>`;
+    commitBtn.disabled = true; return;
+  }
+  const dupes = result.books.filter(b => state.books.some(ex => bookKey(ex.title, ex.author) === bookKey(b.title, b.author)));
+  preview.innerHTML = `
+    <div class="import-stats">
+      📚 ${result.books.length} books found &nbsp;|&nbsp;
+      ${dupes.length} duplicate${dupes.length!==1?'s':''} (will update quantities) &nbsp;|&nbsp;
+      ${result.errors.length} error${result.errors.length!==1?'s':''}
+    </div>
+    ${result.errors.length ? '<div class="csv-errors">' + result.errors.map(e => `<div class="csv-error-item">⚠ ${e}</div>`).join('') + '</div>' : ''}
+    <div class="csv-preview">${result.books.slice(0,10).map(b => `${b.title} — ${b.author}`).join('\n')}${result.books.length > 10 ? `\n… and ${result.books.length - 10} more` : ''}</div>
+  `;
+  commitBtn.disabled = result.books.length === 0;
+}
+
+async function commitImport() {
+  if (!importData || !importData.books.length) return;
+  if (!state.configured) { toast('Not configured', 'error'); return; }
+  try {
+    const res = await apiFetch({ action: 'importData', data: importData.books });
+    state.books = res.books || state.books;
+    state.inventory = res.inventory || state.inventory;
+    updateCounts(); closeModal();
+    toast(`Imported ${importData.books.length} books`, 'success');
+    renderView();
+  } catch (err) {
+    toast('Import failed: ' + err.message, 'error');
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+window.addEventListener('load', () => {
+  renderView(); // render immediately (shows loading or config banner)
+  loadData();
+});
+</script>
+</body>
+</html>
