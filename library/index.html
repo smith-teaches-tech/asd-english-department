@@ -1166,9 +1166,14 @@ function openBookPopover(bookId, event) {
     ${roomRows || '<div class="book-popover-empty">Not assigned to any room</div>'}`;
 
   const rect = event.currentTarget.getBoundingClientRect();
-  popover.style.top  = (rect.bottom + window.scrollY + 4) + 'px';
-  popover.style.left = Math.min(rect.left + window.scrollX, window.innerWidth - 310) + 'px';
   document.body.appendChild(popover);
+  const ph = popover.offsetHeight;
+  // Flip above if not enough room below
+  const top = (rect.bottom + ph + 8 > window.innerHeight)
+    ? rect.top - ph - 4
+    : rect.bottom + 4;
+  popover.style.top  = top + 'px';
+  popover.style.left = Math.min(rect.left, window.innerWidth - 310) + 'px';
 
   setTimeout(() => {
     document.addEventListener('click', function handler(e) {
