@@ -50,6 +50,8 @@
     .tab-btn.active { color: var(--gold-l); border-bottom-color: var(--gold); }
     .tab-count { display: inline-block; background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.7); border-radius: 20px; font-size: 0.68rem; padding: 0.1rem 0.45rem; margin-left: 0.3rem; font-weight: 600; }
     .tab-btn.active .tab-count { background: var(--gold); color: var(--navy-d); }
+    .tab-teacher { display: block; font-size: 0.65rem; color: rgba(255,255,255,0.38); font-weight: 400; margin-top: 0.1rem; letter-spacing: 0; }
+    .tab-btn.active .tab-teacher { color: rgba(232,201,106,0.7); }
 
     /* MAIN */
     main { max-width: 1300px; margin: 0 auto; padding: 1.5rem; width: 100%; flex: 1; }
@@ -224,17 +226,7 @@
 </header>
 
 <div class="tabs-bar">
-  <div class="tabs-inner" id="tabs-container">
-    <button class="tab-btn active" data-tab="all">All Books <span class="tab-count" id="count-all">—</span></button>
-    <button class="tab-btn" data-tab="A-2-3">A-2-3 <span class="tab-count" id="count-A-2-3">—</span></button>
-    <button class="tab-btn" data-tab="A-2-4">A-2-4 <span class="tab-count" id="count-A-2-4">—</span></button>
-    <button class="tab-btn" data-tab="A-2-5">A-2-5 <span class="tab-count" id="count-A-2-5">—</span></button>
-    <button class="tab-btn" data-tab="A-2-6">A-2-6 <span class="tab-count" id="count-A-2-6">—</span></button>
-    <button class="tab-btn" data-tab="A-2-7">A-2-7 <span class="tab-count" id="count-A-2-7">—</span></button>
-    <button class="tab-btn" data-tab="A-2-8">A-2-8 <span class="tab-count" id="count-A-2-8">—</span></button>
-    <button class="tab-btn" data-tab="A-2-9">A-2-9 <span class="tab-count" id="count-A-2-9">—</span></button>
-    <button class="tab-btn" data-tab="A-2-10">A-2-10 <span class="tab-count" id="count-A-2-10">—</span></button>
-  </div>
+  <div class="tabs-inner" id="tabs-container"></div>
 </div>
 
 <main id="main-content"></main>
@@ -243,7 +235,7 @@
 
 <script>
 // ── CONFIG ──────────────────────────────────────────────
-const SCRIPT_URL = 'https://script.google.com/a/macros/isg.edu.sa/s/AKfycbwIGNR_91Wj3CqmX-gZ51QcvoVISLvfd0gs2zRekIzyQQygnb0aJLhxXA_By8hyRC7z/exec';
+const SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
 const ROOMS = ['A-2-3','A-2-4','A-2-5','A-2-6','A-2-7','A-2-8','A-2-9','A-2-10'];
 
 // ── STATE ────────────────────────────────────────────────
@@ -251,7 +243,7 @@ const S = {
   books: [], rooms: [], inventory: [],
   tab: 'all', search: '', sortField: 'title', sortDir: 'asc',
   mode: 'view',  // 'view' | 'edit' | 'recount'
-  configured: SCRIPT_URL !== 'YOUR_APPS_SCRIPT_URL_HERE'
+  configured: SCRIPT_URL !== 'https://script.google.com/a/macros/isg.edu.sa/s/AKfycbwIGNR_91Wj3CqmX-gZ51QcvoVISLvfd0gs2zRekIzyQQygnb0aJLhxXA_By8hyRC7z/exec'
 };
 // Pending qty edits: { "roomId|bookId": newQty }
 const pending = {};
@@ -285,14 +277,28 @@ function setStatus(type, text) {
   document.getElementById('status-dot').className = 'status-dot '+(type||'');
   document.getElementById('status-text').textContent = text;
 }
-function updateCounts() {
-  const el = document.getElementById('count-all');
-  if (el) el.textContent = S.books.length;
-  ROOMS.forEach(r => {
-    const el = document.getElementById(`count-${r}`);
-    if (el) el.textContent = S.inventory.filter(i=>i.room_id===r&&Number(i.quantity)>0).length;
-  });
+function renderTabs() {
+  const container = document.getElementById('tabs-container');
+  if (!container) return;
+  container.innerHTML =
+    `<button class="tab-btn${S.tab==='all'?' active':''}" data-tab="all">All Books <span class="tab-count">${S.books.length||'—'}</span></button>` +
+    ROOMS.map(r => {
+      const t = teacher(r);
+      const cnt = S.inventory.filter(i=>i.room_id===r&&Number(i.quantity)>0).length;
+      return `<button class="tab-btn${S.tab===r?' active':''}" data-tab="${r}">
+        ${r} <span class="tab-count">${cnt||'—'}</span>
+        ${t ? `<span class="tab-teacher">${esc(t)}</span>` : ''}
+      </button>`;
+    }).join('');
+  // Re-bind click events on freshly rendered tabs
+  container.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => {
+    if (S.mode !== 'view') { S.mode='view'; clearPending(); }
+    S.tab = btn.dataset.tab; S.search = '';
+    renderTabs();
+    renderView();
+  }));
 }
+function updateCounts() { renderTabs(); }
 
 // ── TOAST ────────────────────────────────────────────────
 function toast(msg, type='default', ms=3000) {
@@ -361,9 +367,9 @@ function sortBooks(books) {
 function renderView() {
   // Save scroll and search value before re-render
   const prevSearch = S.search;
+  renderTabs();
   document.getElementById('main-content').innerHTML =
     S.tab === 'all' ? renderAll() : renderRoom(S.tab);
-  bindTabEvents();
   // Restore search input without stealing focus
   const si = document.getElementById('search-input');
   if (si) { si.value = prevSearch; si.addEventListener('input', e=>{ S.search=e.target.value; debounceRender(); }); }
@@ -378,13 +384,8 @@ let renderTimer;
 function debounceRender() { clearTimeout(renderTimer); renderTimer = setTimeout(renderView, 120); }
 
 function bindTabEvents() {
-  document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', ()=>{
-    if (S.mode !== 'view') { S.mode='view'; clearPending(); }
-    S.tab=btn.dataset.tab; S.search='';
-    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    renderView();
-  }));
+  // Tab events are bound inside renderTabs(); this is kept for compatibility
+  renderTabs();
 }
 
 // ── ALL BOOKS ────────────────────────────────────────────
@@ -1036,7 +1037,7 @@ async function doImport(){
 }
 
 // ── INIT ─────────────────────────────────────────────────
-window.addEventListener('load', ()=>{ renderView(); loadData(); });
+window.addEventListener('load', ()=>{ renderTabs(); renderView(); loadData(); });
 </script>
 </body>
 </html>
