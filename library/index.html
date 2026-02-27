@@ -427,8 +427,9 @@ function renderAll() {
       <td><div class="actions-cell">
         <button class="btn btn-ghost" title="Delete from database" onclick="deleteBook('${b.book_id}')">🗑</button>
       </div></td>
-    </tr>`).join('') : `<tr><td colspan="6"><div class="empty-state"><h3>No books found</h3><p>${q||cf?'Try adjusting your search or filter.':'Add your first book.'}</p></div></td></tr>`;
-
+    </tr>`).join('') : `<tr><td colspan="6"><div class="empty-state"><h3>No books found</h3>
+`<p>${q||S.courseFilter?'Try adjusting your search or filter.':'Add your first book.'}</p>`
+  
   return `${configBanner}
     <div class="toolbar">
       <div class="search-wrap">
