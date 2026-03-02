@@ -30,16 +30,98 @@
     html { font-size: 15px; }
     body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
 
+    /* ── LOGIN OVERLAY ─────────────────────────────────── */
+    #login-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: linear-gradient(135deg, var(--navy-d) 0%, var(--navy) 60%, #1e3a5f 100%);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.5rem;
+    }
+    #login-overlay.hidden { display: none; }
+    .login-card {
+      background: var(--surface); border-radius: 16px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+      width: 100%; max-width: 400px;
+      overflow: hidden;
+    }
+    .login-card-header {
+      background: linear-gradient(135deg, var(--navy-d), var(--navy));
+      padding: 2rem 2rem 1.5rem;
+      text-align: center;
+    }
+    .login-eyebrow {
+      font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--gold-l); font-weight: 500; margin-bottom: 0.4rem;
+    }
+    .login-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem; font-weight: 700; color: #fff;
+      line-height: 1.25;
+    }
+    .login-subtitle {
+      font-size: 0.78rem; color: rgba(255,255,255,0.45);
+      margin-top: 0.4rem;
+    }
+    .login-card-body { padding: 1.75rem 2rem 2rem; }
+    .login-group { margin-bottom: 1.1rem; }
+    .login-group label {
+      display: block; font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 0.4rem;
+    }
+    .login-input {
+      width: 100%; padding: 0.65rem 0.85rem;
+      border: 1.5px solid var(--border); border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif; font-size: 0.92rem;
+      color: var(--text); background: var(--cream);
+      transition: border-color var(--t), box-shadow var(--t);
+    }
+    .login-input:focus {
+      outline: none; border-color: var(--navy-l);
+      box-shadow: 0 0 0 3px rgba(26,46,74,0.1);
+      background: #fff;
+    }
+    .login-input.error { border-color: var(--danger); background: #fff5f5; }
+    .login-error {
+      display: none; background: #fff0f0; border: 1px solid #f5c0c0;
+      border-radius: 6px; padding: 0.55rem 0.75rem;
+      font-size: 0.8rem; color: var(--danger);
+      margin-bottom: 1rem; text-align: center;
+    }
+    .login-error.visible { display: block; }
+    .login-btn {
+      width: 100%; padding: 0.75rem;
+      background: var(--navy); color: #fff;
+      border: none; border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif; font-size: 0.92rem;
+      font-weight: 600; cursor: pointer; letter-spacing: 0.03em;
+      transition: background var(--t), transform 80ms;
+    }
+    .login-btn:hover { background: var(--navy-l); }
+    .login-btn:active { transform: scale(0.98); }
+    .login-footer {
+      text-align: center; margin-top: 1rem;
+      font-size: 0.72rem; color: var(--muted);
+    }
+
     /* HEADER */
     header { background: linear-gradient(135deg, var(--navy-d) 0%, var(--navy) 100%); color: #fff; padding: 0 1.5rem; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 16px rgba(0,0,0,0.25); }
     .header-inner { max-width: 1300px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; }
     .header-brand .eyebrow { font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold-l); font-weight: 500; }
     .header-brand h1 { font-family: 'Playfair Display', serif; font-size: 1.35rem; font-weight: 700; color: #fff; }
+    .header-right { display: flex; align-items: center; gap: 1rem; }
     .header-status { font-size: 0.78rem; color: rgba(255,255,255,0.55); display: flex; align-items: center; gap: 0.4rem; }
     .status-dot { width: 7px; height: 7px; border-radius: 50%; background: #6dce8e; display: inline-block; }
     .status-dot.loading { background: var(--gold-l); animation: pulse 1s infinite; }
     .status-dot.error { background: #e07070; }
     @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
+    .logout-btn {
+      background: none; border: 1px solid rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.6); font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem; padding: 0.3rem 0.7rem; border-radius: 5px;
+      cursor: pointer; transition: all var(--t);
+    }
+    .logout-btn:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.45); }
 
     /* TABS */
     .tabs-bar { background: var(--navy-d); border-top: 1px solid rgba(255,255,255,0.07); }
@@ -252,15 +334,42 @@
 </head>
 <body>
 
+<!-- ── LOGIN OVERLAY ──────────────────────────────────────── -->
+<div id="login-overlay">
+  <div class="login-card">
+    <div class="login-card-header">
+      <div class="login-eyebrow">American School of Dhahran</div>
+      <div class="login-title">English Department Library</div>
+      <div class="login-subtitle">Staff access only</div>
+    </div>
+    <div class="login-card-body">
+      <div class="login-error" id="login-error">Incorrect username or password.</div>
+      <div class="login-group">
+        <label for="login-user">Username</label>
+        <input class="login-input" type="text" id="login-user" autocomplete="username" placeholder="Enter username">
+      </div>
+      <div class="login-group">
+        <label for="login-pass">Password</label>
+        <input class="login-input" type="password" id="login-pass" autocomplete="current-password" placeholder="Enter password">
+      </div>
+      <button class="login-btn" onclick="attemptLogin()">Sign In →</button>
+      <div class="login-footer">Contact your department head if you need access.</div>
+    </div>
+  </div>
+</div>
+
 <header>
   <div class="header-inner">
     <div class="header-brand">
       <span class="eyebrow">American School of Dhahran</span>
       <h1>English Department Library</h1>
     </div>
-    <div class="header-status">
-      <span class="status-dot" id="status-dot"></span>
-      <span id="status-text">Loading…</span>
+    <div class="header-right">
+      <div class="header-status">
+        <span class="status-dot" id="status-dot"></span>
+        <span id="status-text">Loading…</span>
+      </div>
+      <button class="logout-btn" onclick="logout()">Sign Out</button>
     </div>
   </div>
 </header>
@@ -274,6 +383,68 @@
 <div class="modal-overlay" id="modal-overlay"><div class="modal" id="modal-box"></div></div>
 
 <script>
+// ── LOGIN CONFIG — change these credentials ──────────────
+// To add more users, add more objects to the array:
+// { user: 'username', pass: 'password' }
+const CREDENTIALS = [
+  { user: 'english', pass: 'asd2025' }
+];
+
+// Session key (just keeps login across page refreshes in the same browser session)
+const SESSION_KEY = 'asd_library_auth';
+
+function attemptLogin() {
+  const user = document.getElementById('login-user').value.trim().toLowerCase();
+  const pass = document.getElementById('login-pass').value;
+  const err  = document.getElementById('login-error');
+  const ui   = document.getElementById('login-user');
+  const pi   = document.getElementById('login-pass');
+
+  const match = CREDENTIALS.find(c => c.user === user && c.pass === pass);
+  if (match) {
+    sessionStorage.setItem(SESSION_KEY, '1');
+    document.getElementById('login-overlay').classList.add('hidden');
+    err.classList.remove('visible');
+    ui.classList.remove('error'); pi.classList.remove('error');
+    loadData();
+  } else {
+    err.classList.add('visible');
+    ui.classList.add('error'); pi.classList.add('error');
+    pi.value = '';
+    pi.focus();
+    // Shake animation
+    const card = document.querySelector('.login-card');
+    card.style.animation = 'none';
+    card.style.transform = 'translateX(-8px)';
+    setTimeout(() => { card.style.transition = 'transform 400ms cubic-bezier(.36,.07,.19,.97)'; card.style.transform = 'translateX(0)'; }, 10);
+    setTimeout(() => { card.style.transition = ''; }, 420);
+  }
+}
+
+function logout() {
+  sessionStorage.removeItem(SESSION_KEY);
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+  document.getElementById('login-error').classList.remove('visible');
+  document.getElementById('login-overlay').classList.remove('hidden');
+}
+
+// Check session on load — if already authenticated, skip login
+function checkSession() {
+  if (sessionStorage.getItem(SESSION_KEY) === '1') {
+    document.getElementById('login-overlay').classList.add('hidden');
+    return true;
+  }
+  return false;
+}
+
+// Allow Enter key to submit login
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !document.getElementById('login-overlay').classList.contains('hidden')) {
+    attemptLogin();
+  }
+});
+
 // ── CONFIG ──────────────────────────────────────────────
 const SCRIPT_URL = 'https://script.google.com/a/macros/isg.edu.sa/s/AKfycbwIGNR_91Wj3CqmX-gZ51QcvoVISLvfd0gs2zRekIzyQQygnb0aJLhxXA_By8hyRC7z/exec';
 const ROOMS = ['A-2-3','A-2-4','A-2-5','A-2-6','A-2-7','A-2-8','A-2-9','A-2-10'];
@@ -331,7 +502,6 @@ function renderTabs() {
         ${t ? `<span class="tab-teacher">${esc(t)}</span>` : ''}
       </button>`;
     }).join('');
-  // Re-bind click events on freshly rendered tabs
   container.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => {
     if (S.mode !== 'view') { S.mode='view'; clearPending(); }
     S.tab = btn.dataset.tab; S.search = '';
@@ -406,29 +576,23 @@ function sortBooks(books) {
 
 // ── RENDER ───────────────────────────────────────────────
 function renderView() {
-  // Save scroll and search value before re-render
   const prevSearch = S.search;
   renderTabs();
   document.getElementById('main-content').innerHTML =
     S.tab === 'all' ? renderAll() : renderRoom(S.tab);
-  // Restore search input without stealing focus
   const si = document.getElementById('search-input');
   if (si) { si.value = prevSearch; initSearchDropdown(si); }
   document.querySelectorAll('th[data-sort]').forEach(th => th.addEventListener('click', ()=>{
     const f=th.dataset.sort;
     if(S.sortField===f) { S.sortDir=S.sortDir==='asc'?'desc':'asc'; }
-    else { S.sortField=f; S.sortDir = f==='qty' ? 'desc' : 'asc'; } // qty defaults highest first
+    else { S.sortField=f; S.sortDir = f==='qty' ? 'desc' : 'asc'; }
     renderView();
   }));
 }
 
 let renderTimer;
 function debounceRender() { clearTimeout(renderTimer); renderTimer = setTimeout(renderView, 120); }
-
-function bindTabEvents() {
-  // Tab events are bound inside renderTabs(); this is kept for compatibility
-  renderTabs();
-}
+function bindTabEvents() { renderTabs(); }
 
 // ── COURSE BADGE ─────────────────────────────────────────
 function courseBadge(course) {
@@ -489,12 +653,12 @@ function renderAll() {
 function renderRoom(roomId) {
   const q=S.search.toLowerCase();
   const t=teacher(roomId);
-  const mode=S.mode; // 'view' | 'edit' | 'recount'
+  const mode=S.mode;
 
   let books = S.books.filter(b=>{
     const qty=invQty(roomId,b.book_id);
     if(qty<=0) return false;
-    return true; // search handled by dropdown, not table filter
+    return true;
   });
   books=sortBooks(books);
 
@@ -504,11 +668,9 @@ function renderRoom(roomId) {
       <button class="btn btn-primary" onclick="saveTeacher('${roomId}')">Save</button>
     </div>` : `<div class="teacher-display">${t?'👤 '+esc(t):'<em style="color:var(--muted)">No teacher assigned</em>'}</div>`;
 
-  // Mode indicator pill
   const modePill = mode==='edit' ? `<span class="mode-indicator">✏ Edit Mode</span>` :
                    mode==='recount' ? `<span class="mode-indicator recount">📋 Recount Mode</span>` : '';
 
-  // Action buttons
   const hasPending = Object.keys(pending).length > 0;
   const actionBtns = mode==='view' ? `
       <button class="btn btn-gold" onclick="setMode('edit')">✏ Edit Room</button>
@@ -519,7 +681,6 @@ function renderRoom(roomId) {
       <button class="btn btn-gold active" onclick="exitEdit()">✓ Done</button>
     ` : `<button class="btn btn-teal active" onclick="setMode('view')">✓ Done</button>`;
 
-  // Table rows
   const rows = books.length ? books.map(b=>{
     const qty=invQty(roomId,b.book_id);
     const key=`${roomId}|${b.book_id}`;
@@ -553,8 +714,6 @@ function renderRoom(roomId) {
       <h3>No books in this room</h3>
       <p>Use "Add Books Here" to add books to this room.</p>
     </div></td></tr>`;
-
-  const colSpan = mode==='edit' ? 4 : 3;
 
   return `
     <div class="room-header">
@@ -638,9 +797,7 @@ async function saveAllQty() {
 
 // ── RECOUNT ──────────────────────────────────────────────
 function openRecountModal(roomId) {
-  // Show ALL catalog books so user can enter counts for everything
   const allBooks = sortBooks(S.books);
-
   const rows = allBooks.map(b=>{
     const current = invQty(roomId, b.book_id);
     return `<tr>
@@ -742,7 +899,7 @@ function deleteBook(bookId) {
   });
 }
 
-// ── ADD TO CATALOG (All Books tab) ────────────────────────
+// ── ADD BOOK ─────────────────────────────────────────────
 function openAddBookModal() {
   openModal(`<div class="modal wide">
     <div class="modal-header">
@@ -806,10 +963,6 @@ function onAbQtyInput(inp) {
   inp.classList.toggle('has-val', val > 0);
   const row = document.getElementById('ab-row-' + inp.dataset.room);
   if (row) row.classList.toggle('has-qty', val > 0);
-  // Hide/show hint
-  const anyQty = ROOMS.some(r => (parseInt(document.getElementById('ab-qty-'+r)?.value)||0) > 0);
-  const hint = document.getElementById('ab-room-hint');
-  if (hint) hint.style.display = anyQty ? 'none' : 'none'; // only show on submit attempt
 }
 
 function checkDupe(title,author,warnId) {
@@ -823,105 +976,58 @@ async function submitAddBook() {
   const title  = document.getElementById('ab-title').value.trim();
   const author = document.getElementById('ab-author').value.trim();
   const course = document.getElementById('ab-course').value;
-
   if (!title)  { toast('Title is required','warning'); return; }
   if (!author) { toast('Author is required','warning'); return; }
-
-  // Collect room quantities
   const roomQtys = {};
-  ROOMS.forEach(r => {
-    const v = parseInt(document.getElementById('ab-qty-'+r)?.value) || 0;
-    if (v > 0) roomQtys[r] = v;
-  });
-
-  if (Object.keys(roomQtys).length === 0) {
-    document.getElementById('ab-room-hint').style.display = 'block';
-    toast('Assign at least one copy to a room','warning');
-    return;
-  }
-
-  // Check for duplicate
+  ROOMS.forEach(r => { const v = parseInt(document.getElementById('ab-qty-'+r)?.value) || 0; if (v > 0) roomQtys[r] = v; });
+  if (Object.keys(roomQtys).length === 0) { document.getElementById('ab-room-hint').style.display = 'block'; toast('Assign at least one copy to a room','warning'); return; }
   const ex = S.books.find(b => bKey(b.title,b.author) === bKey(title,author));
   if (ex) {
-    // Book exists — just add the room quantities
-    confirmDialog(
-      `"${esc(title)}" already exists in the catalog.<br><br>Add the specified copies to the selected rooms using the existing record?`,
-      async () => {
-        try {
-          const updates = Object.entries(roomQtys).map(([room_id, qty]) => ({
-            room_id, book_id: ex.book_id,
-            quantity: invQty(room_id, ex.book_id) + qty
-          }));
-          await apiPost({ action: 'updateInventoryBatch', updates });
-          updates.forEach(u => {
-            const inv = S.inventory.find(i => i.room_id===u.room_id && i.book_id===u.book_id);
-            if (inv) inv.quantity = u.quantity;
-            else S.inventory.push({ room_id: u.room_id, book_id: u.book_id, quantity: u.quantity, updated_at: now() });
-          });
-          updateCounts(); closeModal();
-          toast(`Copies of "${title}" added to ${Object.keys(roomQtys).length} room${Object.keys(roomQtys).length>1?'s':''}`, 'success');
-          renderView();
-        } catch(err) { toast('Failed: '+err.message,'error'); }
-      }, false
-    );
+    confirmDialog(`"${esc(title)}" already exists in the catalog.<br><br>Add the specified copies to the selected rooms using the existing record?`, async () => {
+      try {
+        const updates = Object.entries(roomQtys).map(([room_id, qty]) => ({ room_id, book_id: ex.book_id, quantity: invQty(room_id, ex.book_id) + qty }));
+        await apiPost({ action: 'updateInventoryBatch', updates });
+        updates.forEach(u => { const inv = S.inventory.find(i => i.room_id===u.room_id && i.book_id===u.book_id); if (inv) inv.quantity = u.quantity; else S.inventory.push({ room_id: u.room_id, book_id: u.book_id, quantity: u.quantity, updated_at: now() }); });
+        updateCounts(); closeModal(); toast(`Copies of "${title}" added`, 'success'); renderView();
+      } catch(err) { toast('Failed: '+err.message,'error'); }
+    }, false);
     return;
   }
-
-  // New book — create and assign to rooms
   try {
     const book_id = genId();
-    // Create the book first (with first room assignment for backward compat)
-    const firstRoom = Object.keys(roomQtys)[0];
     const d = await apiPost({ action:'addBook', book_id, title, author, course: course||'', room_id: null, quantity: 0 });
     const bid = d.book_id || book_id;
     if (!S.books.find(b=>b.book_id===bid)) S.books.push({ book_id: bid, title, author, course: course||'', created_at: now(), updated_at: now() });
-
-    // Now batch-assign all rooms
     const updates = Object.entries(roomQtys).map(([room_id, qty]) => ({ room_id, book_id: bid, quantity: qty }));
     await apiPost({ action: 'updateInventoryBatch', updates });
-    updates.forEach(u => {
-      S.inventory.push({ room_id: u.room_id, book_id: u.book_id, quantity: u.quantity, updated_at: now() });
-    });
-
+    updates.forEach(u => { S.inventory.push({ room_id: u.room_id, book_id: u.book_id, quantity: u.quantity, updated_at: now() }); });
     updateCounts(); closeModal();
-    const roomList = Object.entries(roomQtys).map(([r,q])=>`${r}: ${q}`).join(', ');
-    toast(`"${title}" added — ${roomList}`, 'success');
-    renderView();
+    toast(`"${title}" added`, 'success'); renderView();
   } catch(err) { toast('Failed: '+err.message,'error'); }
 }
 
-// ── TRANSFER COPIES ───────────────────────────────────────
+// ── TRANSFER ─────────────────────────────────────────────
 function openTransferModal(fromRoom, bookId) {
   const b=S.books.find(b=>b.book_id===bookId);
   const avail=invQty(fromRoom,bookId);
   const others=ROOMS.filter(r=>r!==fromRoom);
-
   openModal(`<div class="modal">
     <div class="modal-header">
-      <div><h3>⇄ Transfer Copies Between Rooms</h3>
-        <div class="modal-subtitle">Move physical copies from one room to another.</div>
-      </div>
+      <div><h3>⇄ Transfer Copies Between Rooms</h3><div class="modal-subtitle">Move physical copies from one room to another.</div></div>
       <button class="modal-close" onclick="closeModal()">×</button>
     </div>
     <div class="modal-body">
-      <div class="form-group"><label>Book</label>
-        <input class="form-input readonly" type="text" value="${esc(b?.title)} — ${esc(b?.author)}" readonly>
-      </div>
+      <div class="form-group"><label>Book</label><input class="form-input readonly" type="text" value="${esc(b?.title)} — ${esc(b?.author)}" readonly></div>
       <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:0.75rem;align-items:end;margin-bottom:1rem">
-        <div>
-          <label style="display:block;font-size:0.8rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin-bottom:0.35rem">From Room</label>
-          <input class="form-input readonly" type="text" value="${fromRoom} (${avail} available)" readonly>
-        </div>
+        <div><label style="display:block;font-size:0.8rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin-bottom:0.35rem">From Room</label>
+          <input class="form-input readonly" type="text" value="${fromRoom} (${avail} available)" readonly></div>
         <div style="padding-bottom:0.6rem;font-size:1.2rem;color:var(--muted)">→</div>
-        <div>
-          <label style="display:block;font-size:0.8rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin-bottom:0.35rem">To Room</label>
-          <select class="form-select" id="tr-to">${others.map(r=>`<option value="${r}">${r}</option>`).join('')}</select>
-        </div>
+        <div><label style="display:block;font-size:0.8rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin-bottom:0.35rem">To Room</label>
+          <select class="form-select" id="tr-to">${others.map(r=>`<option value="${r}">${r}</option>`).join('')}</select></div>
       </div>
       <div class="form-group"><label>How many copies to transfer?</label>
         <input class="form-input" id="tr-qty" type="number" min="1" max="${avail}" value="1">
-        <div class="form-hint">Max available in ${fromRoom}: ${avail}</div>
-      </div>
+        <div class="form-hint">Max available in ${fromRoom}: ${avail}</div></div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
@@ -957,37 +1063,23 @@ function openCourseEdit(bookId, triggerEl) {
   if (!book) return;
   const currentCourse = book.course || '';
   const popover = document.createElement('div');
-  popover.className = 'course-popover';
-  popover.id = 'course-popover';
+  popover.className = 'course-popover'; popover.id = 'course-popover';
   const items = ['Unassigned', ...COURSES.filter(c => c !== 'Unassigned')];
   popover.innerHTML = `<div class="course-popover-title">Assign Course</div>` +
-    items.map(c => {
-      const val = c === 'Unassigned' ? '' : c;
-      const selected = (currentCourse === val) || (!currentCourse && c === 'Unassigned');
-      return `<div class="course-popover-item${selected?' selected':''}" data-val="${val}">${c}</div>`;
-    }).join('');
+    items.map(c => { const val = c === 'Unassigned' ? '' : c; const selected = (currentCourse === val) || (!currentCourse && c === 'Unassigned'); return `<div class="course-popover-item${selected?' selected':''}" data-val="${val}">${c}</div>`; }).join('');
   const rect = triggerEl.getBoundingClientRect();
   popover.style.top  = (rect.bottom + window.scrollY + 4) + 'px';
   popover.style.left = (rect.left + window.scrollX) + 'px';
   document.body.appendChild(popover);
   popover.querySelectorAll('.course-popover-item').forEach(item => {
     item.addEventListener('click', async () => {
-      const newCourse = item.dataset.val;
-      popover.remove();
+      const newCourse = item.dataset.val; popover.remove();
       if (newCourse === (book.course || '')) return;
-      try {
-        await apiPost({ action: 'updateBookCourse', book_id: bookId, course: newCourse });
-        book.course = newCourse;
-        toast(`Course set to "${newCourse || 'Unassigned'}"`, 'success');
-        renderView();
-      } catch(err) { toast('Failed: ' + err.message, 'error'); }
+      try { await apiPost({ action: 'updateBookCourse', book_id: bookId, course: newCourse }); book.course = newCourse; toast(`Course updated`,'success'); renderView(); }
+      catch(err) { toast('Failed: '+err.message,'error'); }
     });
   });
-  setTimeout(() => {
-    document.addEventListener('click', function handler(e) {
-      if (!popover.contains(e.target)) { popover.remove(); document.removeEventListener('click', handler); }
-    });
-  }, 50);
+  setTimeout(() => { document.addEventListener('click', function handler(e) { if (!popover.contains(e.target)) { popover.remove(); document.removeEventListener('click', handler); } }); }, 50);
 }
 
 // ── SEARCH DROPDOWN ──────────────────────────────────────
@@ -999,31 +1091,13 @@ function initSearchDropdown(inp) {
     const dd = document.getElementById('search-dropdown');
     if (!dd) return;
     if (q.length < 2) { dd.classList.remove('open'); dd.innerHTML=''; return; }
-    // If on a room tab, only show books in that room
     const roomId = S.tab !== 'all' ? S.tab : null;
-    const pool = roomId
-      ? S.books.filter(b => invQty(roomId, b.book_id) > 0)
-      : S.books;
-    const matches = pool.filter(b =>
-      b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q)
-    ).slice(0, 12);
-    if (!matches.length) {
-      dd.innerHTML = '<div class="search-dropdown-empty">No matches found</div>';
-      dd.classList.add('open'); return;
-    }
-    dd.innerHTML = matches.map((b,i) =>
-      `<div class="search-dropdown-item" data-book-id="${b.book_id}" data-idx="${i}">
-        <span class="sd-title">${esc(b.title)}</span>
-        <span class="sd-author">${esc(b.author)}</span>
-      </div>`
-    ).join('');
+    const pool = roomId ? S.books.filter(b => invQty(roomId, b.book_id) > 0) : S.books;
+    const matches = pool.filter(b => b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q)).slice(0, 12);
+    if (!matches.length) { dd.innerHTML = '<div class="search-dropdown-empty">No matches found</div>'; dd.classList.add('open'); return; }
+    dd.innerHTML = matches.map((b,i) => `<div class="search-dropdown-item" data-book-id="${b.book_id}" data-idx="${i}"><span class="sd-title">${esc(b.title)}</span><span class="sd-author">${esc(b.author)}</span></div>`).join('');
     dd.classList.add('open');
-    dd.querySelectorAll('.search-dropdown-item').forEach(item => {
-      item.addEventListener('mousedown', e => {
-        e.preventDefault();
-        selectSearchResult(item.dataset.bookId, inp, dd);
-      });
-    });
+    dd.querySelectorAll('.search-dropdown-item').forEach(item => { item.addEventListener('mousedown', e => { e.preventDefault(); selectSearchResult(item.dataset.bookId, inp, dd); }); });
   });
   inp.addEventListener('keydown', e => {
     const dd = document.getElementById('search-dropdown');
@@ -1034,43 +1108,19 @@ function initSearchDropdown(inp) {
     else if (e.key === 'Enter' && hiIdx>=0) { selectSearchResult(items[hiIdx].dataset.bookId, inp, dd); e.preventDefault(); }
     else if (e.key === 'Escape') { dd.classList.remove('open'); inp.value=''; }
   });
-  inp.addEventListener('blur', () => {
-    setTimeout(() => {
-      const dd = document.getElementById('search-dropdown');
-      if (dd) dd.classList.remove('open');
-    }, 150);
-  });
+  inp.addEventListener('blur', () => { setTimeout(() => { const dd = document.getElementById('search-dropdown'); if (dd) dd.classList.remove('open'); }, 150); });
 }
 
-function highlightDDItem(items, idx) {
-  items.forEach((it,i) => it.classList.toggle('hi', i===idx));
-}
+function highlightDDItem(items, idx) { items.forEach((it,i) => it.classList.toggle('hi', i===idx)); }
 
 function selectSearchResult(bookId, inp, dd) {
-  const book = S.books.find(b => b.book_id === bookId);
-  if (!book) return;
-  inp.value = '';
-  if (dd) { dd.classList.remove('open'); dd.innerHTML = ''; }
-  // Find the row in the table and scroll to it
+  inp.value = ''; if (dd) { dd.classList.remove('open'); dd.innerHTML = ''; }
   const row = document.querySelector(`tr[data-book-id="${bookId}"]`);
-  if (row) {
-    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    row.classList.add('row-highlight');
-    setTimeout(() => row.classList.remove('row-highlight'), 2000);
-  } else {
-    // Book exists but may be filtered out — reset filters and try again
-    S.search = ''; S.courseFilter = '';
-    const cfEl = document.getElementById('course-filter');
-    if (cfEl) cfEl.value = '';
-    renderView();
-    setTimeout(() => {
-      const r2 = document.querySelector(`tr[data-book-id="${bookId}"]`);
-      if (r2) { r2.scrollIntoView({ behavior: 'smooth', block: 'center' }); r2.classList.add('row-highlight'); setTimeout(()=>r2.classList.remove('row-highlight'),2000); }
-    }, 150);
-  }
+  if (row) { row.scrollIntoView({ behavior: 'smooth', block: 'center' }); row.classList.add('row-highlight'); setTimeout(() => row.classList.remove('row-highlight'), 2000); }
+  else { S.search = ''; S.courseFilter = ''; renderView(); setTimeout(() => { const r2 = document.querySelector(`tr[data-book-id="${bookId}"]`); if (r2) { r2.scrollIntoView({ behavior: 'smooth', block: 'center' }); r2.classList.add('row-highlight'); setTimeout(()=>r2.classList.remove('row-highlight'),2000); } }, 150); }
 }
 
-// ── BOOK POPOVER (title click) ────────────────────────────
+// ── BOOK POPOVER ─────────────────────────────────────────
 function openBookPopover(bookId, event) {
   event.stopPropagation();
   const existing = document.getElementById('book-popover');
@@ -1082,37 +1132,17 @@ function openBookPopover(bookId, event) {
     const q = qty ? Number(qty.quantity) : 0;
     if (q <= 0) return null;
     const t = teacher(r);
-    return `<div class="book-popover-row">
-      <span><span class="book-popover-room">${r}</span>${t?' · <em style="font-size:0.75rem;color:var(--muted)">'+esc(t)+'</em>':''}</span>
-      <span class="book-popover-qty">${q}</span>
-    </div>`;
+    return `<div class="book-popover-row"><span><span class="book-popover-room">${r}</span>${t?' · <em style="font-size:0.75rem;color:var(--muted)">'+esc(t)+'</em>':''}</span><span class="book-popover-qty">${q}</span></div>`;
   }).filter(Boolean).join('');
-
   const popover = document.createElement('div');
-  popover.className = 'book-popover';
-  popover.id = 'book-popover';
-  popover.innerHTML = `
-    <div class="book-popover-header">
-      <div class="bp-title">${esc(book.title)}</div>
-      <div class="bp-author">${esc(book.author)}</div>
-    </div>
-    ${roomRows || '<div class="book-popover-empty">Not assigned to any room</div>'}`;
-
+  popover.className = 'book-popover'; popover.id = 'book-popover';
+  popover.innerHTML = `<div class="book-popover-header"><div class="bp-title">${esc(book.title)}</div><div class="bp-author">${esc(book.author)}</div></div>${roomRows || '<div class="book-popover-empty">Not assigned to any room</div>'}`;
   const rect = event.currentTarget.getBoundingClientRect();
   document.body.appendChild(popover);
   const ph = popover.offsetHeight;
-  // Flip above if not enough room below
-  const top = (rect.bottom + ph + 8 > window.innerHeight)
-    ? rect.top - ph - 4
-    : rect.bottom + 4;
-  popover.style.top  = top + 'px';
-  popover.style.left = Math.min(rect.left, window.innerWidth - 310) + 'px';
-
-  setTimeout(() => {
-    document.addEventListener('click', function handler(e) {
-      if (!popover.contains(e.target)) { popover.remove(); document.removeEventListener('click', handler); }
-    });
-  }, 50);
+  const top = (rect.bottom + ph + 8 > window.innerHeight) ? rect.top - ph - 4 : rect.bottom + 4;
+  popover.style.top = top + 'px'; popover.style.left = Math.min(rect.left, window.innerWidth - 310) + 'px';
+  setTimeout(() => { document.addEventListener('click', function handler(e) { if (!popover.contains(e.target)) { popover.remove(); document.removeEventListener('click', handler); } }); }, 50);
 }
 
 // ── CSV ───────────────────────────────────────────────────
@@ -1174,7 +1204,7 @@ function showPreview(data){
   const el=document.getElementById('imp-preview'),btn=document.getElementById('imp-commit');
   if(data.error){el.innerHTML=`<div class="form-warning">✕ ${data.error}</div>`;btn.disabled=true;return;}
   const dupes=data.books.filter(b=>S.books.some(ex=>bKey(ex.title,ex.author)===bKey(b.title,b.author)));
-  el.innerHTML=`<div class="import-stats">📚 ${data.books.length} books &nbsp;|&nbsp; ${dupes.length} duplicate${dupes.length!==1?'s':''} (quantities will update) &nbsp;|&nbsp; ${data.errors.length} error${data.errors.length!==1?'s':''}</div>
+  el.innerHTML=`<div class="import-stats">📚 ${data.books.length} books &nbsp;|&nbsp; ${dupes.length} duplicate${dupes.length!==1?'s':''} &nbsp;|&nbsp; ${data.errors.length} error${data.errors.length!==1?'s':''}</div>
     ${data.errors.map(e=>`<div class="csv-error-item">⚠ ${e}</div>`).join('')}
     <div class="csv-preview">${data.books.slice(0,10).map(b=>`${b.title} — ${b.author}`).join('\n')}${data.books.length>10?`\n…and ${data.books.length-10} more`:''}</div>`;
   btn.disabled=data.books.length===0;
@@ -1190,7 +1220,17 @@ async function doImport(){
 }
 
 // ── INIT ─────────────────────────────────────────────────
-window.addEventListener('load', ()=>{ renderTabs(); renderView(); loadData(); });
+window.addEventListener('load', () => {
+  renderTabs();
+  renderView();
+  // Only load data if already authenticated
+  if (checkSession()) {
+    loadData();
+  } else {
+    // Focus username field for faster login
+    setTimeout(() => document.getElementById('login-user')?.focus(), 100);
+  }
+});
 </script>
 </body>
 </html>
