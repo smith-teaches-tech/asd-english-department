@@ -385,23 +385,28 @@
 
 <script>
 // ── LOGIN CONFIG — change these credentials ──────────────
-// To add more users, add more objects to the array:
-// { user: 'username', pass: 'password' }
+// Passwords are SHA-256 hashed. To generate a new hash:
+// Open browser console and run:
+// crypto.subtle.digest('SHA-256', new TextEncoder().encode('yourpassword'))
+//   .then(b => console.log(Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')))
 const CREDENTIALS = [
-  { user: 'english', pass: 'asd2025' }
+  { user: 'english', pass: 'd729ba88ab238a947b54823164ea010be1b7a7a4fae2cb2bbcdc437ccd63ca7d' }
 ];
-
-// Session key (just keeps login across page refreshes in the same browser session)
 const SESSION_KEY = 'asd_library_auth';
 
-function attemptLogin() {
+async function hashPassword(plain) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(plain));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function attemptLogin() {
   const user = document.getElementById('login-user').value.trim().toLowerCase();
   const pass = document.getElementById('login-pass').value;
   const err  = document.getElementById('login-error');
   const ui   = document.getElementById('login-user');
   const pi   = document.getElementById('login-pass');
-
-  const match = CREDENTIALS.find(c => c.user === user && c.pass === pass);
+  const hashed = await hashPassword(pass);
+  const match = CREDENTIALS.find(c => c.user === user && c.pass === hashed);
   if (match) {
     sessionStorage.setItem(SESSION_KEY, '1');
     document.getElementById('login-overlay').classList.add('hidden');
@@ -413,7 +418,6 @@ function attemptLogin() {
     ui.classList.add('error'); pi.classList.add('error');
     pi.value = '';
     pi.focus();
-    // Shake animation
     const card = document.querySelector('.login-card');
     card.style.animation = 'none';
     card.style.transform = 'translateX(-8px)';
