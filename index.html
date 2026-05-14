@@ -135,18 +135,19 @@
     .doc-arrow { color: var(--muted); font-size: 0.75rem; flex-shrink: 0; }
 
     /* ── CURRICULUM MAP ─────────────────────────── */
-    .curriculum-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.75rem; }
+    .curriculum-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 0.6rem; }
     .curriculum-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
-    .curriculum-card-header { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-l) 100%); padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; }
-    .curriculum-course { font-family: 'Playfair Display', serif; font-size: 0.92rem; font-weight: 600; color: #fff; }
-    .curriculum-level { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; background: rgba(201,164,59,0.3); color: var(--gold-l); border: 1px solid rgba(201,164,59,0.4); padding: 0.15rem 0.5rem; border-radius: 20px; }
-    .curriculum-links { padding: 0.5rem 0; }
-    .curriculum-link { display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 1rem; text-decoration: none; color: var(--text); font-size: 0.82rem; transition: background 150ms; border-bottom: 1px solid var(--border); }
+    .curriculum-card-header { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-l) 100%); padding: 0.5rem 0.85rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+    .curriculum-course { font-family: 'Playfair Display', serif; font-size: 0.85rem; font-weight: 600; color: #fff; line-height: 1.2; }
+    .curriculum-level { font-size: 0.58rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; background: rgba(242,101,34,0.25); color: var(--gold-l); border: 1px solid rgba(242,101,34,0.4); padding: 0.1rem 0.45rem; border-radius: 20px; flex-shrink: 0; }
+    .curriculum-links { padding: 0.15rem 0; }
+    .curriculum-link { display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.85rem; text-decoration: none; color: var(--text); font-size: 0.78rem; transition: background 150ms; border-bottom: 1px solid var(--border); }
     .curriculum-link:last-child { border-bottom: none; }
     .curriculum-link:hover { background: var(--cream); }
     .curriculum-link.placeholder { color: var(--muted); font-style: italic; cursor: default; }
     .curriculum-link.placeholder:hover { background: none; }
-    .curriculum-link-icon { font-size: 0.85rem; opacity: 0.6; }
+    .curriculum-link-icon { font-size: 0.8rem; opacity: 0.6; }
+    .curriculum-link-icon.folder { opacity: 1; filter: saturate(1.4); }
 
     /* ── FOOTER ─────────────────────────────────── */
     footer { background: var(--navy-d); color: rgba(255,255,255,0.4); text-align: center; padding: 1.5rem; font-size: 0.75rem; }
@@ -260,7 +261,7 @@
         <span class="doc-arrow">→</span>
       </a>
 
-      <a class="doc-row" href="https://docs.google.com/document/d/1MGoDh7G08d2QOoy3iAcPB4obq1SQUFAgAsp1ujF2d50/edit" target="_blank" rel="noopener">
+      <a class="doc-row" href="https://docs.google.com/document/d/1vCJ7MfFMPbmSJ0NA0hiS_f5fjAdrwkK6A9DqA23Kpuo/edit" target="_blank" rel="noopener">
         <div class="doc-icon">📝</div>
         <div class="doc-info">
           <div class="doc-name">HS English Agenda: 25-26</div>
@@ -272,7 +273,7 @@
       <a class="doc-row" href="https://docs.google.com/document/d/1Cu8K3SEySHTTengX2J3uIIxzYy0GPwc5cHXx_Wr748o/edit" target="_blank" rel="noopener">
         <div class="doc-icon">📋</div>
         <div class="doc-info">
-          <div class="doc-name">ASD Performance Standards</div>
+          <div class="doc-name">DHS Performance Standards</div>
           <div class="doc-meta">Google Doc · Grading &amp; Assessment Policy</div>
         </div>
         <span class="doc-arrow">→</span>
@@ -307,7 +308,7 @@
         </div>
         <div class="curriculum-links">
           <a class="curriculum-link" href="https://drive.google.com/drive/folders/1CTyJJPW8z8v5RELThsY38o3gYNMIAsmC" target="_blank" rel="noopener">
-            <span class="curriculum-link-icon">📁</span> Course Folder
+            <span class="curriculum-link-icon folder">📁</span> Course Folder
           </a>
           <a class="curriculum-link" href="https://docs.google.com/document/d/1oOdmac4JJc6o8skDi0NeecY7V_Daz0AraJLCw0xFzfo/edit" target="_blank" rel="noopener">
             <span class="curriculum-link-icon">📄</span> Curriculum Map
@@ -323,7 +324,7 @@
         </div>
         <div class="curriculum-links">
           <a class="curriculum-link" href="https://drive.google.com/drive/folders/1mfUCEWY95R_5NpRMYH2imu-1SY_n9enL" target="_blank" rel="noopener">
-            <span class="curriculum-link-icon">📁</span> Course Folder
+            <span class="curriculum-link-icon folder">📁</span> Course Folder
           </a>
           <a class="curriculum-link" href="https://docs.google.com/document/d/1FeojCBvdbxPrhwivw0CXgJg0ajomAaLlF8eiddP69Rc/edit" target="_blank" rel="noopener">
             <span class="curriculum-link-icon">📄</span> Curriculum Map
@@ -339,7 +340,7 @@
         </div>
         <div class="curriculum-links">
           <a class="curriculum-link" href="https://drive.google.com/drive/folders/16LydKyWA9VFazQOBKvB7ROW4th1TTDcT" target="_blank" rel="noopener">
-            <span class="curriculum-link-icon">📁</span> Course Folder
+            <span class="curriculum-link-icon folder">📁</span> Course Folder
           </a>
           <a class="curriculum-link" href="https://docs.google.com/document/d/1RkE4-nTSakzWE0LbWs2mXfwNfjz-3NsXeOMoaAiy7kQ/edit" target="_blank" rel="noopener">
             <span class="curriculum-link-icon">📄</span> Curriculum Map
@@ -355,7 +356,7 @@
         </div>
         <div class="curriculum-links">
           <a class="curriculum-link" href="https://drive.google.com/drive/folders/1vWGFNtKRX8tOb5at6lrcO4-mdPl6UCkj" target="_blank" rel="noopener">
-            <span class="curriculum-link-icon">📁</span> Course Folder
+            <span class="curriculum-link-icon folder">📁</span> Course Folder
           </a>
           <a class="curriculum-link" href="https://docs.google.com/document/d/1MrPzqLNtm_wwy_x_ES3kGqTscHm510U3J9HanyWeSkY/edit" target="_blank" rel="noopener">
             <span class="curriculum-link-icon">📄</span> Curriculum Map
@@ -371,7 +372,7 @@
         </div>
         <div class="curriculum-links">
           <a class="curriculum-link" href="https://drive.google.com/drive/folders/0B5uqKsiokuVrfktwR080cVBLM3g1X3V2YUJuMElBZXpOdHl3R1NWSVlWUk9DSmZTS0VhQVE" target="_blank" rel="noopener">
-            <span class="curriculum-link-icon">📁</span> Course Folder
+            <span class="curriculum-link-icon folder">📁</span> Course Folder
           </a>
           <a class="curriculum-link" href="https://docs.google.com/document/d/1392t_8sfqxssy2HecCfHSHJY99jLsLnCwmqIcVt83IQ/edit" target="_blank" rel="noopener">
             <span class="curriculum-link-icon">📄</span> Curriculum Map
@@ -387,7 +388,7 @@
         </div>
         <div class="curriculum-links">
           <a class="curriculum-link" href="https://drive.google.com/drive/folders/1cVKzfti54Zyi5RX2KRGOeBdheq6AnBbj" target="_blank" rel="noopener">
-            <span class="curriculum-link-icon">📁</span> Course Folder
+            <span class="curriculum-link-icon folder">📁</span> Course Folder
           </a>
           <a class="curriculum-link" href="https://docs.google.com/document/d/1FulX-2SXVnr5p0ByVtQBOqg1zpteDjG4GtoOxh1-pas/edit" target="_blank" rel="noopener">
             <span class="curriculum-link-icon">📄</span> Curriculum Map
@@ -403,7 +404,7 @@
         </div>
         <div class="curriculum-links">
           <a class="curriculum-link" href="https://drive.google.com/drive/folders/1b0BDdbKqaheN4ivyHf9feIjQOkvEANqR" target="_blank" rel="noopener">
-            <span class="curriculum-link-icon">📁</span> Course Folder
+            <span class="curriculum-link-icon folder">📁</span> Course Folder
           </a>
           <a class="curriculum-link" href="https://docs.google.com/document/d/1Mz-rg4O60MAxAHfbQuzS2bks3yGnM247ECMceVqs61k/edit" target="_blank" rel="noopener">
             <span class="curriculum-link-icon">📄</span> Curriculum Map
@@ -419,7 +420,7 @@
         </div>
         <div class="curriculum-links">
           <a class="curriculum-link" href="https://drive.google.com/drive/folders/1W_hmmAugBNLNTen_-JXIUYAM1qmV8ci-" target="_blank" rel="noopener">
-            <span class="curriculum-link-icon">📁</span> Course Folder
+            <span class="curriculum-link-icon folder">📁</span> Course Folder
           </a>
           <a class="curriculum-link" href="https://docs.google.com/document/d/1lov_upII6OR3nancEOj3Cwfa-cAolQ9ymu0KL6F52EY/edit" target="_blank" rel="noopener">
             <span class="curriculum-link-icon">📄</span> Curriculum Map
@@ -435,7 +436,7 @@
         </div>
         <div class="curriculum-links">
           <a class="curriculum-link" href="https://drive.google.com/drive/folders/1ejYgFTXUrVIe1aeFgq_qpLQTFpZfEF9g" target="_blank" rel="noopener">
-            <span class="curriculum-link-icon">📁</span> Course Folder
+            <span class="curriculum-link-icon folder">📁</span> Course Folder
           </a>
           <a class="curriculum-link" href="https://docs.google.com/document/d/199bfFF4p2Zl_UCDgzixD4j7Tn2cIOOtWUT_r1dvxaxM/edit" target="_blank" rel="noopener">
             <span class="curriculum-link-icon">📄</span> Curriculum Map
@@ -451,7 +452,7 @@
         </div>
         <div class="curriculum-links">
           <a class="curriculum-link" href="https://drive.google.com/drive/folders/1yaDdM14bQ9d46nxC_4qpi2IMMHRCtTRU" target="_blank" rel="noopener">
-            <span class="curriculum-link-icon">📁</span> Course Folder
+            <span class="curriculum-link-icon folder">📁</span> Course Folder
           </a>
           <a class="curriculum-link" href="https://docs.google.com/document/d/1xwYUt0Dvc9qylFOHA88ulCnavhFwseU1-H2E6mI1AnE/edit" target="_blank" rel="noopener">
             <span class="curriculum-link-icon">📄</span> Curriculum Map
@@ -467,7 +468,7 @@
         </div>
         <div class="curriculum-links">
           <a class="curriculum-link" href="https://drive.google.com/drive/folders/1xrTzoIuVcqNvfvi3kiSH9HXzJQJKsn6_" target="_blank" rel="noopener">
-            <span class="curriculum-link-icon">📁</span> Course Folder
+            <span class="curriculum-link-icon folder">📁</span> Course Folder
           </a>
           <a class="curriculum-link" href="https://docs.google.com/document/d/1N0_7fRVK-45wc_UZXo5iyuUc9M_jOSYOuUCBbTzw8Ac/edit" target="_blank" rel="noopener">
             <span class="curriculum-link-icon">📄</span> Curriculum Map
