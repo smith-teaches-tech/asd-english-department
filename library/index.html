@@ -249,46 +249,9 @@
       .btn { font-size: 0.8rem; padding: 0.5rem 0.75rem; }
     }
 
-    /* ── LOGIN OVERLAY ─────────────────────────────────────── */
-    .login-overlay { position:fixed; inset:0; background:rgba(10,20,40,0.92); z-index:9999; display:flex; align-items:center; justify-content:center; }
-    .login-overlay.hidden { display:none; }
-    .login-card { background:var(--surface); border-radius:12px; padding:2.5rem 2rem; width:100%; max-width:360px; box-shadow:0 20px 60px rgba(0,0,0,0.5); }
-    .login-logo { text-align:center; margin-bottom:1.5rem; }
-    .login-logo .eyebrow { font-size:0.7rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); }
-    .login-logo h2 { font-family:'Playfair Display',serif; font-size:1.4rem; color:var(--navy); margin-top:0.25rem; }
-    .login-field { margin-bottom:1rem; }
-    .login-field label { display:block; font-size:0.78rem; font-weight:600; color:var(--muted); margin-bottom:0.35rem; letter-spacing:0.05em; text-transform:uppercase; }
-    .login-input { width:100%; padding:0.65rem 0.85rem; border:1.5px solid var(--border); border-radius:var(--radius); font-family:'DM Sans',sans-serif; font-size:0.95rem; background:var(--cream); color:var(--text); transition:border-color var(--t); box-sizing:border-box; }
-    .login-input:focus { outline:none; border-color:var(--navy-l); background:var(--surface); }
-    .login-input.error { border-color:var(--danger); background:#fff5f5; }
-    .login-error { font-size:0.82rem; color:var(--danger); text-align:center; margin-bottom:0.75rem; min-height:1.2rem; opacity:0; transition:opacity 0.2s; }
-    .login-error.visible { opacity:1; }
-    .login-btn { width:100%; padding:0.75rem; background:var(--navy); color:#fff; border:none; border-radius:var(--radius); font-family:'DM Sans',sans-serif; font-size:0.95rem; font-weight:600; cursor:pointer; letter-spacing:0.03em; transition:background var(--t); }
-    .login-btn:hover { background:var(--navy-l); }
-    .logout-btn { font-size:0.75rem; color:var(--muted); background:none; border:none; cursor:pointer; padding:0.2rem 0.5rem; border-radius:4px; }
-    .logout-btn:hover { background:var(--cream); color:var(--navy); }
   </style>
 </head>
 <body>
-
-<div class="login-overlay" id="login-overlay">
-  <div class="login-card">
-    <div class="login-logo">
-      <div class="eyebrow">American School of Dhahran</div>
-      <h2>English Department Library</h2>
-    </div>
-    <div class="login-field">
-      <label>Username</label>
-      <input class="login-input" type="text" id="login-user" autocomplete="username" placeholder="Username">
-    </div>
-    <div class="login-field">
-      <label>Password</label>
-      <input class="login-input" type="password" id="login-pass" autocomplete="current-password" placeholder="Enter password">
-    </div>
-    <div class="login-error" id="login-error">Incorrect username or password.</div>
-    <button class="login-btn" onclick="attemptLogin()">Sign In</button>
-  </div>
-</div>
 
 <header>
   <div class="header-inner">
@@ -297,7 +260,6 @@
       <h1>English Department Library</h1>
     </div>
     <div class="header-status">
-      <button class="logout-btn" onclick="logout()" title="Sign out">⎋ Sign out</button>
       <span class="status-dot" id="status-dot"></span>
       <span id="status-text">Loading…</span>
     </div>
@@ -313,65 +275,6 @@
 <div class="modal-overlay" id="modal-overlay"><div class="modal" id="modal-box"></div></div>
 
 <script>
-// ── LOGIN CONFIG ─────────────────────────────────────────
-// Passwords are SHA-256 hashed. To generate a new hash:
-// Open browser console and run:
-// crypto.subtle.digest('SHA-256', new TextEncoder().encode('yourpassword'))
-//   .then(b => console.log(Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')))
-const CREDENTIALS = [
-  { user: 'asdenglish', pass: 'd729ba88ab238a947b54823164ea010be1b7a7a4fae2cb2bbcdc437ccd63ca7d' }
-];
-const SESSION_KEY = 'asd_library_auth';
-async function hashPassword(plain) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(plain));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-}
-async function attemptLogin() {
-  const user = document.getElementById('login-user').value.trim().toLowerCase();
-  const pass = document.getElementById('login-pass').value;
-  const err  = document.getElementById('login-error');
-  const ui   = document.getElementById('login-user');
-  const pi   = document.getElementById('login-pass');
-  const hashed = await hashPassword(pass);
-  const match = CREDENTIALS.find(c => c.user === user && c.pass === hashed);
-  if (match) {
-    sessionStorage.setItem(SESSION_KEY, '1');
-    document.getElementById('login-overlay').classList.add('hidden');
-    err.classList.remove('visible');
-    ui.classList.remove('error'); pi.classList.remove('error');
-    loadData();
-  } else {
-    err.classList.add('visible');
-    ui.classList.add('error'); pi.classList.add('error');
-    pi.value = '';
-    pi.focus();
-    const card = document.querySelector('.login-card');
-    card.style.animation = 'none';
-    card.style.transform = 'translateX(-8px)';
-    setTimeout(() => { card.style.transition = 'transform 400ms cubic-bezier(.36,.07,.19,.97)'; card.style.transform = 'translateX(0)'; }, 10);
-    setTimeout(() => { card.style.transition = ''; }, 420);
-  }
-}
-function logout() {
-  sessionStorage.removeItem(SESSION_KEY);
-  document.getElementById('login-user').value = '';
-  document.getElementById('login-pass').value = '';
-  document.getElementById('login-error').classList.remove('visible');
-  document.getElementById('login-overlay').classList.remove('hidden');
-}
-function checkSession() {
-  if (sessionStorage.getItem(SESSION_KEY) === '1') {
-    document.getElementById('login-overlay').classList.add('hidden');
-    return true;
-  }
-  return false;
-}
-document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !document.getElementById('login-overlay').classList.contains('hidden')) {
-    attemptLogin();
-  }
-});
-
 // ── CONFIG ──────────────────────────────────────────────
 const SCRIPT_URL = 'https://script.google.com/a/macros/isg.edu.sa/s/AKfycbwIGNR_91Wj3CqmX-gZ51QcvoVISLvfd0gs2zRekIzyQQygnb0aJLhxXA_By8hyRC7z/exec';
 const ROOMS = ['A-2-3','A-2-4','A-2-5','A-2-6','A-2-7','A-2-8','A-2-9','A-2-10'];
@@ -474,7 +377,6 @@ function confirmDialog(msg, onConfirm, danger=true) {
 
 // ── LOAD ─────────────────────────────────────────────────
 async function loadData() {
-  if (!checkSession()) return;
   if (!S.configured) { setStatus('error','Not configured'); renderView(); return; }
   setStatus('loading','Loading…');
   try {
