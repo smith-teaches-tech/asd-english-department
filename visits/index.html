@@ -238,14 +238,15 @@
     const blk = BLOCK[p];
     const day = nextSchoolDay();
     const [sh, sm] = blk.s.split(":").map(Number);
+    const [eh, em] = blk.e.split(":").map(Number);
     const start = new Date(day); start.setHours(sh, sm, 0, 0);
-    const end = new Date(start.getTime() + 20 * 60000);      // 20-min window; visit is ~10 min
+    const end = new Date(day);   end.setHours(eh, em, 0, 0);   // spans the whole class block
     const stamp = dt => `${dt.getFullYear()}${pad(dt.getMonth() + 1)}${pad(dt.getDate())}T${pad(dt.getHours())}${pad(dt.getMinutes())}00`;
     const dayType = p <= 4 ? "A-Day" : "B-Day";
     const title = `Peer visit: ${t.name} — Period ${p}`;
     const details =
-      `Drop into ${t.name}'s Period ${p} class for about 10 minutes — Room ${t.room}.\n\n` +
-      `This is a ${dayType} class. Full block runs ${blk.s}–${blk.e}. ` +
+      `Drop into ${t.name}'s Period ${p} class for about 10 minutes any time during the block — Room ${t.room}.\n\n` +
+      `This is a ${dayType} class, ${blk.s}–${blk.e}. ` +
       `The date is a placeholder — move it to your next ${dayType} that you're free.\n\n` +
       `Afterward, log one line (30 sec): ${LOG_URL}\n\n` +
       `— ASD English Department peer-visit initiative`;
