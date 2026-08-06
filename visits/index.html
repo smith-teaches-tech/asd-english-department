@@ -24,7 +24,9 @@
       --border:  #ddd8ce;
       --text:    #1c2b3a;
       --muted:   #7a8898;
-      --success: #27794e;
+      --ib:      #1f7a49;
+      --ib-bg:   #e6f4ec;
+      --ib-bd:   #bfe3cd;
       --radius:  10px;
       --shadow:  0 2px 16px rgba(26,46,74,0.09);
       --shadow-lg: 0 8px 40px rgba(26,46,74,0.16);
@@ -51,10 +53,15 @@
     /* ── MAIN ───────────────────────────────────── */
     main { max-width: 1200px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
     .section { margin-bottom: 2.75rem; }
-    .section-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid var(--border); position: relative; }
+    .section-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid var(--border); position: relative; }
     .section-header::after { content: ''; position: absolute; left: 0; bottom: -2px; width: 48px; height: 2px; background: var(--gold); }
     .section-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 600; color: var(--navy); display: flex; align-items: center; gap: 0.6rem; }
     .section-icon { font-size: 1rem; opacity: 0.7; }
+    .section-tools { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .legend { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.76rem; color: var(--muted); }
+    .legend .swatch { width: 0.85rem; height: 0.85rem; border-radius: 4px; background: var(--ib-bg); border: 1px solid var(--ib-bd); }
+    .ms-link { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; font-weight: 600; color: var(--navy); text-decoration: none; border-bottom: 1px solid var(--border); padding-bottom: 1px; transition: color 150ms, border-color 150ms; }
+    .ms-link:hover { color: var(--gold-d); border-color: var(--gold); }
 
     /* ── INTRO / HOW IT WORKS ───────────────────── */
     .intro { background: var(--surface); border: 1.5px solid var(--border); border-left: 4px solid var(--gold); border-radius: var(--radius); padding: 1.4rem 1.6rem; box-shadow: var(--shadow); margin-bottom: 1.25rem; }
@@ -77,20 +84,30 @@
 
     /* ── TEACHER GRID ───────────────────────────── */
     .teacher-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 0.85rem; }
-    .teacher-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.1rem 1.2rem 1.05rem; box-shadow: var(--shadow); display: flex; flex-direction: column; transition: transform 150ms, box-shadow 150ms, border-color 150ms; position: relative; overflow: hidden; }
+    .teacher-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.1rem 1.2rem 1.15rem; box-shadow: var(--shadow); display: flex; flex-direction: column; transition: transform 150ms, box-shadow 150ms, border-color 150ms; position: relative; overflow: hidden; }
     .teacher-card::before { content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 3px; background: linear-gradient(180deg, var(--navy), var(--navy-xl)); opacity: 0; transition: opacity 150ms; }
-    .teacher-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); border-color: var(--navy-l); }
+    .teacher-card:hover { box-shadow: var(--shadow-lg); border-color: var(--navy-l); }
     .teacher-card:hover::before { opacity: 1; }
     .tc-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.7rem; }
     .tc-name { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 600; color: var(--navy); }
     .tc-room { flex-shrink: 0; font-size: 0.66rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; background: var(--cream-d); color: var(--navy); border: 1px solid var(--border); padding: 0.2rem 0.55rem; border-radius: 20px; }
-    .tc-courses { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.7rem; }
+    .tc-courses { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.9rem; }
     .tc-course { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.02em; color: var(--gold-d); background: rgba(242,101,34,0.08); border: 1px solid rgba(242,101,34,0.25); padding: 0.15rem 0.5rem; border-radius: 6px; }
-    .tc-sched { font-size: 0.76rem; line-height: 1.55; color: var(--muted); margin-bottom: 1rem; flex: 1; }
-    .tc-sched b { color: var(--text); font-weight: 600; }
-    .btn-cal { display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: var(--surface); border: 1.5px solid var(--navy); color: var(--navy); text-decoration: none; font-weight: 600; font-size: 0.82rem; padding: 0.6rem 1rem; border-radius: var(--radius); transition: background 150ms, color 150ms; margin-top: auto; }
-    .btn-cal:hover { background: var(--navy); color: #fff; }
-    .btn-cal svg { width: 15px; height: 15px; }
+    .tc-course.ib { color: var(--ib); background: var(--ib-bg); border-color: var(--ib-bd); }
+
+    /* ── PERIODS (clickable) ────────────────────── */
+    .tc-periods { margin-top: auto; }
+    .tc-periods .lbl { display: block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: var(--navy); margin-bottom: 0.5rem; }
+    .pills { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .pill { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; min-width: 2.5rem; padding: 0.3rem 0.5rem; border-radius: 8px; font-weight: 700; font-size: 0.9rem; line-height: 1; background: var(--cream-d); color: var(--navy); border: 1.5px solid var(--border); text-decoration: none; cursor: pointer; transition: transform 120ms, box-shadow 120ms, background 120ms, border-color 120ms; }
+    .pill:hover { transform: translateY(-2px); background: #fff; border-color: var(--navy-l); box-shadow: var(--shadow); }
+    .pill .time { font-size: 0.55rem; font-weight: 600; color: var(--muted); margin-top: 0.2rem; letter-spacing: 0.01em; }
+    .pill:hover .time { color: var(--navy-l); }
+    .pill.ib { background: var(--ib-bg); color: var(--ib); border-color: var(--ib-bd); }
+    .pill.ib:hover { border-color: var(--ib); }
+    .pill.ib .time { color: #5a9e78; }
+    .pill .tag { font-size: 0.5rem; font-weight: 800; letter-spacing: 0.05em; margin-top: 0.15rem; }
+    .tc-hint { font-size: 0.7rem; color: var(--muted); margin-top: 0.65rem; line-height: 1.45; }
 
     /* ── FOOTER ─────────────────────────────────── */
     footer { background: var(--navy-d); color: rgba(255,255,255,0.4); text-align: center; padding: 1.5rem; font-size: 0.75rem; }
@@ -130,7 +147,7 @@
   <section class="section">
     <div class="intro">
       <p>The best PD we have is right down the hall. The idea is simple: <strong>once a month, spend ten minutes in a colleague's classroom.</strong> Slip in, watch what's happening, and slip out. No forms, no rubric, no write-up — just curiosity and a quick thank-you afterward.</p>
-      <p>Pick one person to start with, set yourself a gentle monthly reminder, and jot one line in the shared log so we can all see the visits adding up. That's it.</p>
+      <p>Pick one person, tap the period you'd like to drop in on, and jot one line in the shared log afterward so we can all see the visits adding up. That's it.</p>
       <div class="steps">
         <div class="step">
           <div class="step-num">1</div>
@@ -138,11 +155,11 @@
         </div>
         <div class="step">
           <div class="step-num">2</div>
-          <div class="step-text"><b>Tap "Add monthly reminder"</b> — it drops a recurring nudge into your Google Calendar with their room and class times.</div>
+          <div class="step-text"><b>Tap a period</b> — it schedules a visit at that class's real time, and Google adds a reminder ~10 minutes before.</div>
         </div>
         <div class="step">
           <div class="step-num">3</div>
-          <div class="step-text"><b>Drop in for ~10 minutes</b> during one of their English periods that month.</div>
+          <div class="step-text"><b>Drop in for ~10 minutes</b> when the reminder pings. Pick a period you're free.</div>
         </div>
         <div class="step">
           <div class="step-num">4</div>
@@ -164,6 +181,10 @@
   <section class="section">
     <div class="section-header">
       <h2 class="section-title"><span class="section-icon">👋</span> Choose a Colleague to Visit</h2>
+      <div class="section-tools">
+        <span class="legend"><span class="swatch"></span> = IB class</span>
+        <a class="ms-link" id="msLink" href="#" target="_blank" rel="noopener">📅 Full Master Schedule →</a>
+      </div>
     </div>
     <div class="teacher-grid" id="teacherGrid"></div>
   </section>
@@ -175,64 +196,88 @@
 </footer>
 
 <script>
-  // ── The shared visit log (Google Sheet). Change here if the link ever moves. ──
-  const LOG_URL = "https://docs.google.com/spreadsheets/d/11fj-fTrQ-2krUR6pbG3wMTMJhLsMR6ZhaE07XyEOWC4/edit";
+  // ── Shared links. Change here if either ever moves. ──
+  const LOG_URL = "https://docs.google.com/spreadsheets/d/1eom2rj3ySGKXQ5lkp8c5uvu__geF_kVMeVkAIX5bHiQ/edit";
+  const MASTER_SCHEDULE_URL = "https://docs.google.com/spreadsheets/d/18qUjUMfeR9gqwZ6MZkzAaP-QtTiYqsGpqVi3jKrvPas/edit?gid=1478872002#gid=1478872002";
+  const TIMEZONE = "Asia/Riyadh";
 
-  // ── English teachers, pulled from the 2026–2027 HS Master Schedule (English classes only). ──
-  // To add/remove a teacher, just edit this list.
+  // ── HS block times (from the 26–27 Bell Schedule, G9–12 Sun–Wed). ──
+  // P1 & P5 share the first block, P2 & P6 the second, etc.
+  const BLOCK = {
+    1: { s: "08:05", e: "09:30" }, 5: { s: "08:05", e: "09:30" },
+    2: { s: "09:35", e: "11:00" }, 6: { s: "09:35", e: "11:00" },
+    3: { s: "11:35", e: "13:00" }, 7: { s: "11:35", e: "13:00" },
+    4: { s: "13:05", e: "14:30" }, 8: { s: "13:05", e: "14:30" }
+  };
+
+  // ── English teachers (2026–2027). "periods" = every period they teach; "ib" = which are IB (green on the master schedule). ──
   const TEACHERS = [
-    { name: "A. Cedergren", room: "A2-5",  courses: ["English 10", "Creative Writing"],
-      sched: "English 10 — A-Day P1–3, B-Day P6–7 · Creative Writing — B-Day P8" },
-    { name: "A. Glynn",     room: "A2-10", courses: ["Film Lit", "Adv Film Lit", "AP Lit"],
-      sched: "Film & Adv Film Lit — A-Day P1–2, B-Day P6 · AP Lit — A-Day P3, B-Day P7" },
-    { name: "E. Harris",    room: "A2-4",  courses: ["English 12"],
-      sched: "English 12 — A-Day P1–3, B-Day P5–7" },
-    { name: "M. Bradley",   room: "A2-3",  courses: ["English 11", "AP Lang"],
-      sched: "English 11 — A-Day P1–2, B-Day P7 · AP Lang — A-Day P4, B-Day P6 & P8" },
-    { name: "H. Howard",    room: "A2-9",  courses: ["English 9"],
-      sched: "English 9 — A-Day P2–3, B-Day P6–7" },
-    { name: "M. Parker",    room: "A2-6",  courses: ["English 11", "English 10"],
-      sched: "English 11 — A-Day P2–3 · English 10 — A-Day P4, B-Day P5 & P7–8" },
-    { name: "M. Smith",     room: "A2-7",  courses: ["Building with A.I.", "AP Lang"],
-      sched: "Building with A.I. — A-Day P2 · AP Lang — B-Day P7" },
-    { name: "M. Joseph",    room: "A2-8",  courses: ["AP Research", "English 9"],
-      sched: "AP Research — A-Day P1 · English 9 — A-Day P3–4, B-Day P5 & P7–8" }
+    { name: "A. Cedergren", room: "A2-5",  courses: ["English 10", "Creative Writing"],            periods: [1,2,3,6,7,8], ib: [] },
+    { name: "A. Glynn",     room: "A2-10", courses: ["IB English", "Film Lit", "Adv Film Lit", "AP Lit"], periods: [1,2,3,5,6,7], ib: [1,5] },
+    { name: "E. Harris",    room: "A2-4",  courses: ["English 12"],                                 periods: [1,2,3,5,6,7], ib: [] },
+    { name: "M. Bradley",   room: "A2-3",  courses: ["English 11", "AP Lang"],                      periods: [1,2,4,6,7,8], ib: [] },
+    { name: "H. Howard",    room: "A2-9",  courses: ["IB English", "English 9"],                    periods: [1,2,3,5,6,7], ib: [1,5] },
+    { name: "M. Parker",    room: "A2-6",  courses: ["English 11", "English 10"],                   periods: [2,3,4,5,7,8], ib: [] },
+    { name: "M. Smith",     room: "A2-7",  courses: ["IB Core", "AP Research", "AP Lang"],          periods: [1,3,4,5,6,7], ib: [1,5] },
+    { name: "M. Joseph",    room: "A2-8",  courses: ["AP Research", "English 9"],                   periods: [1,3,4,5,7,8], ib: [] }
   ];
 
-  // Build a recurring monthly Google Calendar reminder link (all-day, Sep–Jun).
-  function calLink(t) {
-    const coursesLine = t.courses.join(", ");
-    const title = `Peer visit: ${t.name} (${t.room})`;
+  const isIB = (t, p) => t.ib.includes(p);
+  const pad = n => String(n).padStart(2, "0");
+
+  // Next regular school day (Sun–Wed in KSA; skip Thu/Fri/Sat), a couple days out for lead time.
+  function nextSchoolDay() {
+    const d = new Date();
+    d.setDate(d.getDate() + 2);
+    while ([4, 5, 6].includes(d.getDay())) d.setDate(d.getDate() + 1); // 4=Thu,5=Fri,6=Sat
+    return d;
+  }
+
+  // Build a ONE-TIME timed Google Calendar event at the class's real block time.
+  function calEvent(t, p) {
+    const blk = BLOCK[p];
+    const day = nextSchoolDay();
+    const [sh, sm] = blk.s.split(":").map(Number);
+    const start = new Date(day); start.setHours(sh, sm, 0, 0);
+    const end = new Date(start.getTime() + 20 * 60000);      // 20-min window; visit is ~10 min
+    const stamp = dt => `${dt.getFullYear()}${pad(dt.getMonth() + 1)}${pad(dt.getDate())}T${pad(dt.getHours())}${pad(dt.getMinutes())}00`;
+    const dayType = p <= 4 ? "A-Day" : "B-Day";
+    const title = `Peer visit: ${t.name} — Period ${p}`;
     const details =
-      `Pop into ${t.name}'s class for about 10 minutes this month — Room ${t.room}.\n\n` +
-      `Teaches: ${coursesLine}\n${t.sched}\n\n` +
+      `Drop into ${t.name}'s Period ${p} class for about 10 minutes — Room ${t.room}.\n\n` +
+      `This is a ${dayType} class. Full block runs ${blk.s}–${blk.e}. ` +
+      `The date is a placeholder — move it to your next ${dayType} that you're free.\n\n` +
       `Afterward, log one line (30 sec): ${LOG_URL}\n\n` +
       `— ASD English Department peer-visit initiative`;
     const params = new URLSearchParams({
       action: "TEMPLATE",
       text: title,
       details: details,
-      dates: "20260901/20260902",
-      recur: "RRULE:FREQ=MONTHLY;COUNT=10"
+      dates: `${stamp(start)}/${stamp(end)}`,
+      ctz: TIMEZONE
     });
     return "https://calendar.google.com/calendar/render?" + params.toString();
   }
 
-  const calSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
-
   const grid = document.getElementById("teacherGrid");
   TEACHERS.forEach(t => {
+    const pills = t.periods.map(p => {
+      const cls = isIB(t, p) ? "pill ib" : "pill";
+      const tag = isIB(t, p) ? `<span class="tag">IB</span>` : "";
+      return `<a class="${cls}" href="${calEvent(t, p)}" target="_blank" rel="noopener" title="Schedule a visit to Period ${p} (${BLOCK[p].s}–${BLOCK[p].e})">${p}${tag}<span class="time">${BLOCK[p].s}</span></a>`;
+    }).join("");
     const card = document.createElement("div");
     card.className = "teacher-card";
     card.innerHTML =
       `<div class="tc-head"><div class="tc-name">${t.name}</div><div class="tc-room">${t.room}</div></div>` +
-      `<div class="tc-courses">${t.courses.map(c => `<span class="tc-course">${c}</span>`).join("")}</div>` +
-      `<div class="tc-sched">${t.sched}</div>` +
-      `<a class="btn-cal" href="${calLink(t)}" target="_blank" rel="noopener">${calSvg} Add monthly reminder</a>`;
+      `<div class="tc-courses">${t.courses.map(c => `<span class="tc-course${c === "IB English" || c === "IB Core" ? " ib" : ""}">${c}</span>`).join("")}</div>` +
+      `<div class="tc-periods"><span class="lbl">Tap a period to schedule ↓</span><div class="pills">${pills}</div>` +
+      `<div class="tc-hint">Adds a timed reminder at that class's real time. Pick a period you're free — move the date to your next matching day.</div></div>`;
     grid.appendChild(card);
   });
 
   document.getElementById("logBtn").href = LOG_URL;
+  document.getElementById("msLink").href = MASTER_SCHEDULE_URL;
 </script>
 </body>
 </html>
