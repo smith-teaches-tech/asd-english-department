@@ -99,15 +99,17 @@
     .tc-periods { margin-top: auto; }
     .tc-periods .lbl { display: block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: var(--navy); margin-bottom: 0.5rem; }
     .pills { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-    .pill { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; min-width: 2.5rem; padding: 0.3rem 0.5rem; border-radius: 8px; font-weight: 700; font-size: 0.9rem; line-height: 1; background: var(--cream-d); color: var(--navy); border: 1.5px solid var(--border); text-decoration: none; cursor: pointer; transition: transform 120ms, box-shadow 120ms, background 120ms, border-color 120ms; }
+    .pill { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; min-width: 4.4rem; padding: 0.4rem 0.5rem; border-radius: 8px; line-height: 1.15; background: var(--cream-d); color: var(--navy); border: 1.5px solid var(--border); text-decoration: none; cursor: pointer; transition: transform 120ms, box-shadow 120ms, background 120ms, border-color 120ms; }
     .pill:hover { transform: translateY(-2px); background: #fff; border-color: var(--navy-l); box-shadow: var(--shadow); }
-    .pill .time { font-size: 0.55rem; font-weight: 600; color: var(--muted); margin-top: 0.2rem; letter-spacing: 0.01em; }
+    .pill .pnum { font-weight: 700; font-size: 0.82rem; }
+    .pill .course { font-size: 0.64rem; font-weight: 600; margin-top: 0.12rem; }
+    .pill .time { font-size: 0.56rem; font-weight: 600; color: var(--muted); margin-top: 0.12rem; letter-spacing: 0.01em; }
     .pill:hover .time { color: var(--navy-l); }
     .pill.ib { background: var(--ib-bg); color: var(--ib); border-color: var(--ib-bd); }
     .pill.ib:hover { border-color: var(--ib); }
     .pill.ib .time { color: #5a9e78; }
-    .pill .tag { font-size: 0.5rem; font-weight: 800; letter-spacing: 0.05em; margin-top: 0.15rem; }
     .tc-hint { font-size: 0.7rem; color: var(--muted); margin-top: 0.65rem; line-height: 1.45; }
+    .tc-note { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.68rem; font-weight: 500; color: var(--gold-d); background: rgba(242,101,34,0.08); border: 1px solid rgba(242,101,34,0.25); border-radius: 6px; padding: 0.3rem 0.55rem; margin-bottom: 0.85rem; line-height: 1.3; }
 
     /* ── FOOTER ─────────────────────────────────── */
     footer { background: var(--navy-d); color: rgba(255,255,255,0.4); text-align: center; padding: 1.5rem; font-size: 0.75rem; }
@@ -210,19 +212,21 @@
     4: { s: "13:05", e: "14:30" }, 8: { s: "13:05", e: "14:30" }
   };
 
-  // ── English teachers (2026–2027). "periods" = every period they teach; "ib" = which are IB (green on the master schedule). ──
+  // ── English teachers (2026–2027), from the HS Master Schedule. ──
+  // "classes" maps each teaching period → its course (short form). Any course starting with "IB" shows up green.
+  // To edit a teacher's schedule, just change the period → course pairs below.
   const TEACHERS = [
-    { name: "A. Cedergren", room: "A2-5",  courses: ["English 10", "Creative Writing"],            periods: [1,2,3,6,7,8], ib: [] },
-    { name: "A. Glynn",     room: "A2-10", courses: ["IB English", "Film Lit", "Adv Film Lit", "AP Lit"], periods: [1,2,3,5,6,7], ib: [1,5] },
-    { name: "E. Harris",    room: "A2-4",  courses: ["English 12"],                                 periods: [1,2,3,5,6,7], ib: [] },
-    { name: "M. Bradley",   room: "A2-3",  courses: ["English 11", "AP Lang"],                      periods: [1,2,4,6,7,8], ib: [] },
-    { name: "H. Howard",    room: "A2-9",  courses: ["IB English", "English 9"],                    periods: [1,2,3,5,6,7], ib: [1,5] },
-    { name: "M. Parker",    room: "A2-6",  courses: ["English 11", "English 10"],                   periods: [2,3,4,5,7,8], ib: [] },
-    { name: "M. Smith",     room: "A2-7",  courses: ["IB Core", "AP Research", "AP Lang"],          periods: [1,3,4,5,6,7], ib: [1,5] },
-    { name: "M. Joseph",    room: "A2-8",  courses: ["AP Research", "English 9"],                   periods: [1,3,4,5,7,8], ib: [] }
+    { name: "A. Cedergren", room: "A2-5",  classes: { 1:"Eng 10", 2:"Eng 10", 3:"Eng 10", 6:"Eng 10", 7:"Eng 10", 8:"Creative" } },
+    { name: "A. Glynn",     room: "A2-10", classes: { 1:"Film", 2:"Film", 3:"AP Lit", 4:"IB Eng", 6:"Film", 7:"AP Lit", 8:"IB Eng" } },
+    { name: "E. Harris",    room: "A2-4",  noNotice: true, classes: { 1:"Eng 12", 2:"Eng 12", 3:"Eng 12", 5:"Eng 12", 6:"Eng 12", 7:"Eng 12" } },
+    { name: "M. Bradley",   room: "A2-3",  classes: { 1:"Eng 11", 2:"Eng 11", 4:"AP Lang", 6:"AP Lang", 7:"Eng 11", 8:"AP Lang" } },
+    { name: "H. Howard",    room: "A2-9",  classes: { 1:"IB Eng", 2:"Eng 9", 3:"Eng 9", 5:"IB Eng", 6:"Eng 9", 7:"Eng 9" } },
+    { name: "M. Parker",    room: "A2-6",  classes: { 2:"Eng 11", 3:"Eng 11", 4:"Eng 10", 5:"Eng 10", 7:"Eng 10", 8:"Eng 10" } },
+    { name: "M. Smith",     room: "A2-7",  classes: { 1:"IB Core", 2:"Bldg AI", 4:"IB Core", 5:"IB Core", 7:"AP Lang", 8:"IB Core" } },
+    { name: "M. Joseph",    room: "A2-8",  noNotice: true, classes: { 1:"AP Rsch", 3:"Eng 9", 4:"Eng 9", 5:"Eng 9", 7:"Eng 9", 8:"Eng 9" } }
   ];
 
-  const isIB = (t, p) => t.ib.includes(p);
+  const isIBCourse = c => c.startsWith("IB");
   const pad = n => String(n).padStart(2, "0");
 
   // Next regular school day (Sun–Wed in KSA; skip Thu/Fri/Sat), a couple days out for lead time.
@@ -234,7 +238,7 @@
   }
 
   // Build a ONE-TIME timed Google Calendar event at the class's real block time.
-  function calEvent(t, p) {
+  function calEvent(t, p, course) {
     const blk = BLOCK[p];
     const day = nextSchoolDay();
     const [sh, sm] = blk.s.split(":").map(Number);
@@ -243,9 +247,9 @@
     const end = new Date(day);   end.setHours(eh, em, 0, 0);   // spans the whole class block
     const stamp = dt => `${dt.getFullYear()}${pad(dt.getMonth() + 1)}${pad(dt.getDate())}T${pad(dt.getHours())}${pad(dt.getMinutes())}00`;
     const dayType = p <= 4 ? "A-Day" : "B-Day";
-    const title = `Peer visit: ${t.name} — Period ${p}`;
+    const title = `Peer visit: ${t.name} — P${p} ${course}`;
     const details =
-      `Drop into ${t.name}'s Period ${p} class for about 10 minutes any time during the block — Room ${t.room}.\n\n` +
+      `Drop into ${t.name}'s Period ${p} class (${course}) for about 10 minutes any time during the block — Room ${t.room}.\n\n` +
       `This is a ${dayType} class, ${blk.s}–${blk.e}. ` +
       `The date is a placeholder — move it to your next ${dayType} that you're free.\n\n` +
       `Afterward, log one line (30 sec): ${LOG_URL}\n\n` +
@@ -262,18 +266,22 @@
 
   const grid = document.getElementById("teacherGrid");
   TEACHERS.forEach(t => {
-    const pills = t.periods.map(p => {
-      const cls = isIB(t, p) ? "pill ib" : "pill";
-      const tag = isIB(t, p) ? `<span class="tag">IB</span>` : "";
-      return `<a class="${cls}" href="${calEvent(t, p)}" target="_blank" rel="noopener" title="Schedule a visit to Period ${p} (${BLOCK[p].s}–${BLOCK[p].e})">${p}${tag}<span class="time">${BLOCK[p].s}</span></a>`;
+    const periods = Object.keys(t.classes).map(Number).sort((a, b) => a - b);
+    const pills = periods.map(p => {
+      const course = t.classes[p];
+      const cls = isIBCourse(course) ? "pill ib" : "pill";
+      return `<a class="${cls}" href="${calEvent(t, p, course)}" target="_blank" rel="noopener" title="Schedule a visit — Period ${p}, ${course} (${BLOCK[p].s}–${BLOCK[p].e})"><span class="pnum">P${p}</span><span class="course">${course}</span><span class="time">${BLOCK[p].s}</span></a>`;
     }).join("");
     const card = document.createElement("div");
     card.className = "teacher-card";
+    const note = t.noNotice
+      ? `<div class="tc-note">🤫 Prefers surprise visits — just drop in, no heads-up needed.</div>`
+      : "";
     card.innerHTML =
       `<div class="tc-head"><div class="tc-name">${t.name}</div><div class="tc-room">${t.room}</div></div>` +
-      `<div class="tc-courses">${t.courses.map(c => `<span class="tc-course${c === "IB English" || c === "IB Core" ? " ib" : ""}">${c}</span>`).join("")}</div>` +
+      note +
       `<div class="tc-periods"><span class="lbl">Tap a period to schedule ↓</span><div class="pills">${pills}</div>` +
-      `<div class="tc-hint">Adds a timed reminder at that class's real time. Pick a period you're free — move the date to your next matching day.</div></div>`;
+      `<div class="tc-hint">Each button schedules a visit at that class's real time. Pick a period you're free — move the date to your next matching day.</div></div>`;
     grid.appendChild(card);
   });
 
