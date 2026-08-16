@@ -134,6 +134,15 @@
     .doc-meta { font-size: 0.72rem; color: var(--muted); margin-top: 0.1rem; }
     .doc-arrow { color: var(--muted); font-size: 0.75rem; flex-shrink: 0; }
 
+    /* Column view: the three Documents & Links subgroups sit side by side */
+    .docs-columns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; align-items: start; }
+    .docs-col .course-band { margin-top: 0; }
+    .docs-col .docs-grid { grid-template-columns: 1fr; }
+    @media (max-width: 980px) {
+      .docs-columns { grid-template-columns: 1fr; }
+      .docs-col + .docs-col .course-band { margin-top: 1.4rem; }
+    }
+
     /* ── CURRICULUM MAP ─────────────────────────── */
     .curriculum-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 0.6rem; }
     .curriculum-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
@@ -230,8 +239,8 @@
     <a class="nav-link" href="#tools">Tools & Apps</a>
     <a class="nav-link" href="visits/">Peer Visits</a>
     <a class="nav-link" href="#handbook">Department Handbook</a>
-    <a class="nav-link" href="#courses">Courses</a>
     <a class="nav-link" href="#documents">Documents & Links</a>
+    <a class="nav-link" href="#courses">Courses</a>
   </div>
 </nav>
 
@@ -380,7 +389,195 @@
     </div>
   </section>
 
-  <!-- ── SECTION 3: COURSES ──────────────────────── -->
+  <!-- ── SECTION 3: IMPORTANT DOCUMENTS & LINKS ──── -->
+  <!-- NOTE: three subgroups (Forms / Schedules / Hubs). New forms go under "Forms & Requests". -->
+  <section class="section" id="documents">
+    <div class="section-header">
+      <h2 class="section-title">
+        <span class="section-icon">📂</span> Important Documents & Links
+      </h2>
+    </div>
+
+    <div class="docs-columns">
+
+    <div class="docs-col">
+    <h3 class="course-band">Forms & Requests</h3>
+    <div class="docs-grid">
+
+      <a class="doc-row" href="https://docs.google.com/forms/d/e/1FAIpQLScumWa1Sip7HOXrxUTUlXjKHZ0FHNhv1uBXGa0MH4x6Vdsq1g/viewform" target="_blank" rel="noopener">
+        <div class="doc-icon">📢</div>
+        <div class="doc-info">
+          <div class="doc-name">Absence Notification Form</div>
+          <div class="doc-meta">Google Form · Notify of a teacher absence</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+      <a class="doc-row" href="https://drive.google.com/file/d/148IYZY8WR6Z10KMLLLgcRSZQGAzOYRLc/view" target="_blank" rel="noopener">
+        <div class="doc-icon">🏖️</div>
+        <div class="doc-info">
+          <div class="doc-name">Leave of Absence Form</div>
+          <div class="doc-meta">Google Drive · PDF</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+      <a class="doc-row" href="https://docs.google.com/document/d/1wiFmX0_fEqYTgfz0iv7J5_Qn8iF3dVN4Y_VQmVqOhGk/copy" target="_blank" rel="noopener">
+        <div class="doc-icon">📋</div>
+        <div class="doc-info">
+          <div class="doc-name">Substitute Lesson Plan (SY 25/26)</div>
+          <div class="doc-meta">Google Doc · Opens "Make a copy" prompt</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+      <a class="doc-row" href="https://docs.google.com/forms/d/e/1FAIpQLScNJBDDXC98ZSfQIzLpCo6IIzFPhTgCuzJm-6lP8octiVRlOA/viewform" target="_blank" rel="noopener">
+        <div class="doc-icon">🚩</div>
+        <div class="doc-info">
+          <div class="doc-name">Discipline Referral Form</div>
+          <div class="doc-meta">Google Form · Submit a referral</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+      <a class="doc-row" href="https://docs.google.com/forms/d/e/1FAIpQLSct-mMYA3lspL6lG-gD-oLqVtTXF-nyW6z3xNA7I2hpT9h3Xw/viewform" target="_blank" rel="noopener">
+        <div class="doc-icon">👕</div>
+        <div class="doc-info">
+          <div class="doc-name">Dress Code Form</div>
+          <div class="doc-meta">Google Form · Report a dress code issue</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+      <a class="doc-row" href="https://docs.google.com/spreadsheets/d/1zbiKroKuRt9ML0Sxpqpwf1YPVytcOVVUQSfuwZwisdY/edit?gid=951939135#gid=951939135" target="_blank" rel="noopener">
+        <div class="doc-icon">📵</div>
+        <div class="doc-info">
+          <div class="doc-name">Cell Phone Log</div>
+          <div class="doc-meta">Google Sheet · Log a collected phone</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+      <a class="doc-row" href="assets/asd-clinic-pass.pdf" target="_blank" rel="noopener">
+        <div class="doc-icon">🏥</div>
+        <div class="doc-info">
+          <div class="doc-name">Clinic Pass (Nurse)</div>
+          <div class="doc-meta">PDF · Printable hall pass · 6 per sheet</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+    </div>
+    </div>
+
+    <div class="docs-col">
+    <h3 class="course-band">Schedules & Reference</h3>
+    <div class="docs-grid">
+
+      <a class="doc-row" href="https://docs.google.com/spreadsheets/d/18qUjUMfeR9gqwZ6MZkzAaP-QtTiYqsGpqVi3jKrvPas/edit?gid=1478872002#gid=1478872002" target="_blank" rel="noopener">
+        <div class="doc-icon">📅</div>
+        <div class="doc-info">
+          <div class="doc-name">ASD HS Master Schedule</div>
+          <div class="doc-meta">Google Sheet · 2026–2027</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+      <a class="doc-row" href="https://docs.google.com/spreadsheets/d/1Xd95u22lQ6OigJFsQvP0xDIaTE9s0AmlqXcHf5rNynQ/edit?gid=958515242#gid=958515242" target="_blank" rel="noopener">
+        <div class="doc-icon">📊</div>
+        <div class="doc-info">
+          <div class="doc-name">ASD Scope and Sequence</div>
+          <div class="doc-meta">Google Sheet · English pacing · 2026–2027</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+      <a class="doc-row" href="https://docs.google.com/spreadsheets/d/1Vt-2GigiIUcd6GHS1oLXNnNziMyBh6wdoXUNDPB8_mE/edit?gid=0#gid=0" target="_blank" rel="noopener">
+        <div class="doc-icon">🗓</div>
+        <div class="doc-info">
+          <div class="doc-name">Duty Schedule</div>
+          <div class="doc-meta">Google Sheet · Who's on duty, where &amp; when</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+      <a class="doc-row" href="https://docs.google.com/document/d/1PvIZYS9f2Pnx25_Mrs-E5qAfnON-bQeARXNseboU04s/edit" target="_blank" rel="noopener">
+        <div class="doc-icon">📇</div>
+        <div class="doc-info">
+          <div class="doc-name">School Contacts</div>
+          <div class="doc-meta">Google Doc · Staff &amp; office contact list</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+      <a class="doc-row" href="https://docs.google.com/document/d/16KjUKVYcrqRe_SrfMG9SkMIeYDWVDGctb2xbSxk1B9w/edit" target="_blank" rel="noopener">
+        <div class="doc-icon">📗</div>
+        <div class="doc-info">
+          <div class="doc-name">Student-Parent Handbook</div>
+          <div class="doc-meta">Google Doc · School policies &amp; procedures</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+      <!-- NOTE: Parent Contact link removed — placeholder until the 26-27 sheet is ready. Add href + change div back to <a> to restore. -->
+      <div class="doc-row placeholder">
+        <div class="doc-icon">👥</div>
+        <div class="doc-info">
+          <div class="doc-name">ASD HS Parent Contact Info</div>
+          <div class="doc-meta">Link coming soon</div>
+        </div>
+      </div>
+
+    </div>
+    </div>
+
+    <div class="docs-col">
+    <h3 class="course-band">Hubs & Drives</h3>
+    <div class="docs-grid">
+
+      <a class="doc-row" href="https://docs.google.com/document/d/1mhgYP3niJaxTUd1ATj5G5uemvdzn655D_1MAEZW2GHM/edit" target="_blank" rel="noopener">
+        <div class="doc-icon">🧭</div>
+        <div class="doc-info">
+          <div class="doc-name">ASD Dashboard</div>
+          <div class="doc-meta">Google Doc · School-wide links & resources</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+      <a class="doc-row" href="https://drive.google.com/drive/u/0/folders/0AOTV97r2jrXOUk9PVA" target="_blank" rel="noopener">
+        <div class="doc-icon">📚</div>
+        <div class="doc-info">
+          <div class="doc-name">ASD Curriculum Shared Drive</div>
+          <div class="doc-meta">Google Drive · All curriculum maps live here</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+      <a class="doc-row" href="https://drive.google.com/drive/folders/1Xj4xkTPQF8Yl0ZmLWiWDyckbUdbe127B" target="_blank" rel="noopener">
+        <div class="doc-icon">📁</div>
+        <div class="doc-info">
+          <div class="doc-name">Advisory Folder</div>
+          <div class="doc-meta">Google Drive Folder</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+      <a class="doc-row" href="https://docs.google.com/presentation/d/1IEHndAotcmgtru7fkGiyxpqnIMPEVFNMko0b8u97RbI/edit" target="_blank" rel="noopener">
+        <div class="doc-icon">🖼️</div>
+        <div class="doc-info">
+          <div class="doc-name">Advisory Slideshow</div>
+          <div class="doc-meta">Google Slides · Current advisory deck</div>
+        </div>
+        <span class="doc-arrow">→</span>
+      </a>
+
+    </div>
+    </div>
+
+    </div><!-- /docs-columns -->
+  </section>
+
+  <!-- ── SECTION 4: COURSES ──────────────────────── -->
   <section class="section" id="courses">
     <div class="section-header">
       <h2 class="section-title">
@@ -575,157 +772,6 @@
 
     </div>
 
-  </section>
-
-  <!-- ── SECTION 4: IMPORTANT DOCUMENTS & LINKS ──── -->
-  <!-- NOTE: three subgroups (Forms / Schedules / Hubs). New forms go under "Forms & Requests". -->
-  <section class="section" id="documents">
-    <div class="section-header">
-      <h2 class="section-title">
-        <span class="section-icon">📂</span> Important Documents & Links
-      </h2>
-    </div>
-
-    <h3 class="course-band">Forms & Requests</h3>
-    <div class="docs-grid">
-
-      <a class="doc-row" href="https://docs.google.com/forms/d/e/1FAIpQLScumWa1Sip7HOXrxUTUlXjKHZ0FHNhv1uBXGa0MH4x6Vdsq1g/viewform" target="_blank" rel="noopener">
-        <div class="doc-icon">📢</div>
-        <div class="doc-info">
-          <div class="doc-name">Absence Notification Form</div>
-          <div class="doc-meta">Google Form · Notify of a teacher absence</div>
-        </div>
-        <span class="doc-arrow">→</span>
-      </a>
-
-      <a class="doc-row" href="https://drive.google.com/file/d/148IYZY8WR6Z10KMLLLgcRSZQGAzOYRLc/view" target="_blank" rel="noopener">
-        <div class="doc-icon">🏖️</div>
-        <div class="doc-info">
-          <div class="doc-name">Leave of Absence Form</div>
-          <div class="doc-meta">Google Drive · PDF</div>
-        </div>
-        <span class="doc-arrow">→</span>
-      </a>
-
-      <a class="doc-row" href="https://docs.google.com/document/d/1wiFmX0_fEqYTgfz0iv7J5_Qn8iF3dVN4Y_VQmVqOhGk/copy" target="_blank" rel="noopener">
-        <div class="doc-icon">📋</div>
-        <div class="doc-info">
-          <div class="doc-name">Substitute Lesson Plan (SY 25/26)</div>
-          <div class="doc-meta">Google Doc · Opens "Make a copy" prompt</div>
-        </div>
-        <span class="doc-arrow">→</span>
-      </a>
-
-      <a class="doc-row" href="https://docs.google.com/forms/d/e/1FAIpQLScNJBDDXC98ZSfQIzLpCo6IIzFPhTgCuzJm-6lP8octiVRlOA/viewform" target="_blank" rel="noopener">
-        <div class="doc-icon">🚩</div>
-        <div class="doc-info">
-          <div class="doc-name">Discipline Referral Form</div>
-          <div class="doc-meta">Google Form · Submit a referral</div>
-        </div>
-        <span class="doc-arrow">→</span>
-      </a>
-
-      <a class="doc-row" href="https://docs.google.com/forms/d/e/1FAIpQLSct-mMYA3lspL6lG-gD-oLqVtTXF-nyW6z3xNA7I2hpT9h3Xw/viewform" target="_blank" rel="noopener">
-        <div class="doc-icon">👕</div>
-        <div class="doc-info">
-          <div class="doc-name">Dress Code Form</div>
-          <div class="doc-meta">Google Form · Report a dress code issue</div>
-        </div>
-        <span class="doc-arrow">→</span>
-      </a>
-
-      <a class="doc-row" href="assets/asd-clinic-pass.pdf" target="_blank" rel="noopener">
-        <div class="doc-icon">🏥</div>
-        <div class="doc-info">
-          <div class="doc-name">Clinic Pass (Nurse)</div>
-          <div class="doc-meta">PDF · Printable hall pass · 6 per sheet</div>
-        </div>
-        <span class="doc-arrow">→</span>
-      </a>
-
-    </div>
-
-    <h3 class="course-band">Schedules & Reference</h3>
-    <div class="docs-grid">
-
-      <a class="doc-row" href="https://docs.google.com/spreadsheets/d/18qUjUMfeR9gqwZ6MZkzAaP-QtTiYqsGpqVi3jKrvPas/edit?gid=1478872002#gid=1478872002" target="_blank" rel="noopener">
-        <div class="doc-icon">📅</div>
-        <div class="doc-info">
-          <div class="doc-name">ASD HS Master Schedule</div>
-          <div class="doc-meta">Google Sheet · 2026–2027</div>
-        </div>
-        <span class="doc-arrow">→</span>
-      </a>
-
-      <a class="doc-row" href="https://docs.google.com/spreadsheets/d/1Xd95u22lQ6OigJFsQvP0xDIaTE9s0AmlqXcHf5rNynQ/edit?gid=958515242#gid=958515242" target="_blank" rel="noopener">
-        <div class="doc-icon">📊</div>
-        <div class="doc-info">
-          <div class="doc-name">ASD Scope and Sequence</div>
-          <div class="doc-meta">Google Sheet · English pacing · 2026–2027</div>
-        </div>
-        <span class="doc-arrow">→</span>
-      </a>
-
-      <!-- NOTE: Duty Roster link removed — placeholder until the 26-27 sheet is ready. Add href + change div back to <a> to restore. -->
-      <div class="doc-row placeholder">
-        <div class="doc-icon">🗓</div>
-        <div class="doc-info">
-          <div class="doc-name">ASD Duty Roster</div>
-          <div class="doc-meta">Link coming soon</div>
-        </div>
-      </div>
-
-      <!-- NOTE: Parent Contact link removed — placeholder until the 26-27 sheet is ready. Add href + change div back to <a> to restore. -->
-      <div class="doc-row placeholder">
-        <div class="doc-icon">👥</div>
-        <div class="doc-info">
-          <div class="doc-name">ASD HS Parent Contact Info</div>
-          <div class="doc-meta">Link coming soon</div>
-        </div>
-      </div>
-
-    </div>
-
-    <h3 class="course-band">Hubs & Drives</h3>
-    <div class="docs-grid">
-
-      <a class="doc-row" href="https://docs.google.com/document/d/1mhgYP3niJaxTUd1ATj5G5uemvdzn655D_1MAEZW2GHM/edit" target="_blank" rel="noopener">
-        <div class="doc-icon">🧭</div>
-        <div class="doc-info">
-          <div class="doc-name">ASD Dashboard</div>
-          <div class="doc-meta">Google Doc · School-wide links & resources</div>
-        </div>
-        <span class="doc-arrow">→</span>
-      </a>
-
-      <a class="doc-row" href="https://drive.google.com/drive/u/0/folders/0AOTV97r2jrXOUk9PVA" target="_blank" rel="noopener">
-        <div class="doc-icon">📚</div>
-        <div class="doc-info">
-          <div class="doc-name">ASD Curriculum Shared Drive</div>
-          <div class="doc-meta">Google Drive · All curriculum maps live here</div>
-        </div>
-        <span class="doc-arrow">→</span>
-      </a>
-
-      <a class="doc-row" href="https://drive.google.com/drive/folders/1Xj4xkTPQF8Yl0ZmLWiWDyckbUdbe127B" target="_blank" rel="noopener">
-        <div class="doc-icon">📁</div>
-        <div class="doc-info">
-          <div class="doc-name">Advisory Folder</div>
-          <div class="doc-meta">Google Drive Folder</div>
-        </div>
-        <span class="doc-arrow">→</span>
-      </a>
-
-      <a class="doc-row" href="https://docs.google.com/presentation/d/1IEHndAotcmgtru7fkGiyxpqnIMPEVFNMko0b8u97RbI/edit" target="_blank" rel="noopener">
-        <div class="doc-icon">🖼️</div>
-        <div class="doc-info">
-          <div class="doc-name">Advisory Slideshow</div>
-          <div class="doc-meta">Google Slides · Current advisory deck</div>
-        </div>
-        <span class="doc-arrow">→</span>
-      </a>
-
-    </div>
   </section>
 
 </main>
