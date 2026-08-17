@@ -221,6 +221,19 @@
     .room-qty-input:focus { outline: none; border-color: var(--navy-l); }
     .room-qty-input.has-val { border-color: var(--success); background: #f0faf5; }
     .recount-note { font-size: 0.78rem; color: var(--muted); background: #f0faf5; border: 1px solid #c0e8d0; border-radius: 6px; padding: 0.6rem 0.75rem; margin-bottom: 0.75rem; }
+    /* Recount search bar — filters the list live so you don't scroll 200+ titles */
+    .recount-search-wrap { position: relative; margin-bottom: 0.6rem; }
+    .recount-search-wrap svg { position: absolute; left: 0.7rem; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+    .recount-search { width: 100%; padding: 0.5rem 2rem 0.5rem 2.15rem; border: 1.5px solid var(--border); border-radius: var(--radius); font-family: 'DM Sans', sans-serif; font-size: 0.88rem; background: var(--surface); color: var(--text); }
+    .recount-search:focus { outline: none; border-color: var(--success); box-shadow: 0 0 0 3px rgba(39,121,78,0.12); }
+    .recount-search-clear { position: absolute; right: 0.45rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--muted); font-size: 1.1rem; line-height: 1; padding: 0.15rem 0.3rem; display: none; }
+    .recount-search-clear:hover { color: var(--text); }
+    .recount-search-wrap.has-text .recount-search-clear { display: block; }
+    .recount-filter-info { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+    .recount-filter-info .rf-counted { color: var(--success); font-weight: 600; }
+    .recount-table tr.rc-hidden { display: none; }
+    .recount-table tr.rc-has-val td { background: #f4fbf7; }
+    .recount-empty-filter { padding: 1.5rem 1rem; text-align: center; color: var(--muted); font-size: 0.88rem; }
 
     /* TOAST */
     #toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 500; display: flex; flex-direction: column; gap: 0.5rem; }
@@ -644,7 +657,8 @@ function openRecountModal(roomId) {
 
   const rows = allBooks.map(b=>{
     const current = invQty(roomId, b.book_id);
-    return `<tr>
+    // data-search holds lowercased title+author so the search bar can filter without re-rendering
+    return `<tr data-search="${esc((b.title+' '+b.author).toLowerCase())}"${current>0?' class="rc-has-val"':''}>
       <td>${esc(b.title)}</td>
       <td style="color:var(--muted);font-size:0.8rem">${esc(b.author)}</td>
       <td style="text-align:center">
@@ -668,18 +682,76 @@ function openRecountModal(roomId) {
         ✔ This sets the definitive count — whatever you type replaces what was recorded before.
         Leave a field at 0 if the book is not in this room.
       </div>
-      <div style="max-height:400px;overflow-y:auto;">
+      <div class="recount-search-wrap" id="rc-search-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="recount-search" id="rc-search" type="text" placeholder="Jump to a title or author…" autocomplete="off" spellcheck="false">
+        <button class="recount-search-clear" id="rc-clear" title="Clear search" type="button">×</button>
+      </div>
+      <div class="recount-filter-info" id="rc-info"></div>
+      <div style="max-height:400px;overflow-y:auto;" id="rc-scroll">
         <table class="recount-table">
           <thead><tr><th>Title</th><th>Author</th><th style="text-align:center">Count</th><th></th></tr></thead>
-          <tbody>${rows}</tbody>
+          <tbody id="rc-body">${rows}</tbody>
         </table>
+        <div class="recount-empty-filter" id="rc-empty" style="display:none">No titles match that search.</div>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
       <button class="btn btn-teal" onclick="submitRecount('${roomId}')">💾 Save Recount</button>
     </div>
-  </div>`);
+  </div>`, box => initRecountSearch(box));
+}
+
+// Live filter for the recount list. Rows are hidden with CSS rather than
+// re-rendered, so anything already typed into a box is never lost.
+function initRecountSearch(box) {
+  const inp   = box.querySelector('#rc-search');
+  const clr   = box.querySelector('#rc-clear');
+  const wrap  = box.querySelector('#rc-search-wrap');
+  const body  = box.querySelector('#rc-body');
+  const empty = box.querySelector('#rc-empty');
+  const info  = box.querySelector('#rc-info');
+  if (!inp || !body) return;
+  const rows = Array.from(body.querySelectorAll('tr'));
+  const total = rows.length;
+
+  function refresh() {
+    const q = inp.value.trim().toLowerCase();
+    wrap.classList.toggle('has-text', q.length > 0);
+    let shown = 0;
+    rows.forEach(tr => {
+      const hit = !q || (tr.dataset.search || '').includes(q);
+      tr.classList.toggle('rc-hidden', !hit);
+      if (hit) shown++;
+    });
+    if (empty) empty.style.display = shown === 0 ? 'block' : 'none';
+    // Count how many titles currently have a number above zero
+    let counted = 0;
+    rows.forEach(tr => {
+      const v = parseInt(tr.querySelector('.recount-input')?.value) || 0;
+      tr.classList.toggle('rc-has-val', v > 0);
+      if (v > 0) counted++;
+    });
+    info.innerHTML = (q ? `Showing <strong>${shown}</strong> of ${total} titles` : `${total} titles`) +
+      ` &nbsp;·&nbsp; <span class="rf-counted">${counted} with copies</span>`;
+  }
+
+  inp.addEventListener('input', refresh);
+  // Escape clears the search first; only closes the modal when already empty
+  inp.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && inp.value) { e.stopPropagation(); inp.value = ''; refresh(); inp.focus(); }
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const first = rows.find(tr => !tr.classList.contains('rc-hidden'));
+      if (first) first.querySelector('.recount-input')?.focus();
+    }
+  });
+  if (clr) clr.addEventListener('click', () => { inp.value = ''; refresh(); inp.focus(); });
+  body.addEventListener('input', e => { if (e.target.classList.contains('recount-input')) refresh(); });
+
+  refresh();
+  inp.focus();
 }
 
 async function submitRecount(roomId) {
