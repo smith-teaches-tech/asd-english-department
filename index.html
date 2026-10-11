@@ -43,7 +43,6 @@
       color: #fff;
       padding: 0 1.5rem;
       position: relative;
-      overflow: hidden;
     }
     .hero::before {
       content: '';
@@ -189,6 +188,36 @@
     .date-card.past { opacity: 0.55; }
     .date-card.past .date-badge { background: var(--muted); }
 
+    /* ── SITE SEARCH ────────────────────────────── */
+    .site-search { position: relative; margin-top: 1.5rem; max-width: 520px; }
+    .ss-box { display: flex; align-items: center; gap: 0.6rem; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: var(--radius); padding: 0 0.9rem; transition: background 150ms, border-color 150ms, box-shadow 150ms; }
+    .ss-box:focus-within { background: #fff; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(242,101,34,0.25); }
+    .ss-box svg { width: 16px; height: 16px; flex-shrink: 0; stroke: rgba(255,255,255,0.55); }
+    .ss-box:focus-within svg { stroke: var(--muted); }
+    #site-search-input { flex: 1; min-width: 0; background: none; border: none; outline: none; font: inherit; font-size: 0.95rem; color: #fff; padding: 0.75rem 0; }
+    #site-search-input::placeholder { color: rgba(255,255,255,0.5); }
+    .ss-box:focus-within #site-search-input { color: var(--text); }
+    .ss-box:focus-within #site-search-input::placeholder { color: var(--muted); }
+    #site-search-input::-webkit-search-cancel-button { display: none; }
+    .ss-kbd { font-size: 0.68rem; border: 1px solid rgba(255,255,255,0.25); border-radius: 4px; padding: 0.05rem 0.4rem; color: rgba(255,255,255,0.5); flex-shrink: 0; }
+    .ss-box:focus-within .ss-kbd { display: none; }
+    .ss-panel { position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-lg); max-height: min(62vh, 480px); overflow-y: auto; z-index: 50; padding: 0.35rem; color: var(--text); }
+    .ss-heading { font-size: 0.64rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding: 0.45rem 0.6rem 0.3rem; font-weight: 600; }
+    .ss-result { display: flex; align-items: center; gap: 0.7rem; padding: 0.5rem 0.6rem; border-radius: 8px; text-decoration: none; color: inherit; cursor: pointer; }
+    .ss-result.active { background: var(--cream-d); }
+    .ss-icon { width: 30px; height: 30px; border-radius: 7px; background: var(--cream-d); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; flex-shrink: 0; }
+    .ss-result.active .ss-icon { background: #fff; }
+    .ss-icon img { width: 20px; height: 20px; object-fit: contain; }
+    .ss-text { min-width: 0; flex: 1; }
+    .ss-name { display: block; font-weight: 500; font-size: 0.86rem; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ss-meta { display: block; font-size: 0.7rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.05rem; }
+    .ss-arrow { color: var(--muted); font-size: 0.75rem; flex-shrink: 0; }
+    .ss-empty { padding: 0.8rem 0.7rem; font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+    .ss-foot { border-top: 1px solid var(--border); margin-top: 0.3rem; padding: 0.45rem 0.6rem 0.2rem; font-size: 0.66rem; color: var(--muted); }
+    @keyframes ssFlash { 0%, 100% { box-shadow: var(--shadow); } 35% { box-shadow: 0 0 0 3px var(--gold), var(--shadow-lg); } }
+    .search-flash { animation: ssFlash 1.4s ease 2; }
+    @media (max-width: 640px), (hover: none) { .ss-kbd, .ss-foot { display: none; } }
+
     /* ── FOOTER ─────────────────────────────────── */
     footer { background: var(--navy-d); color: rgba(255,255,255,0.4); text-align: center; padding: 1.5rem; font-size: 0.75rem; }
     footer a { color: var(--gold-l); text-decoration: none; }
@@ -224,6 +253,16 @@
       </div>
       <h1>English<br><em>Department</em></h1>
       <p class="hero-subtitle">Resources, tools, and curriculum materials for the ASD English Department faculty.</p>
+      <div class="site-search" id="site-search">
+        <div class="ss-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <input id="site-search-input" type="search" autocomplete="off" spellcheck="false"
+                 placeholder="Search forms, docs, courses… try &ldquo;sick day&rdquo; or &ldquo;awards&rdquo;"
+                 role="combobox" aria-expanded="false" aria-controls="site-search-panel" aria-autocomplete="list" aria-label="Search the department site">
+          <kbd class="ss-kbd">/</kbd>
+        </div>
+        <div class="ss-panel" id="site-search-panel" role="listbox" hidden></div>
+      </div>
     </div>
     <div class="hero-badge">
       <div class="school">ASD · Dhahran, KSA</div>
@@ -302,7 +341,7 @@
     </div>
     <div class="tools-grid">
 
-      <a class="tool-card" href="library/">
+      <a class="tool-card" href="library/" data-keywords="books novels texts inventory class sets borrow checkout reading">
         <div class="tool-emoji">📚</div>
         <div>
           <div class="tool-name">Department Library</div>
@@ -311,7 +350,7 @@
         <span class="tool-badge badge-live">● Live</span>
       </a>
 
-      <a class="tool-card" href="visits/">
+      <a class="tool-card" href="visits/" data-keywords="observation observe walkthrough learning walk peer visit colleague">
         <div class="tool-emoji">👋</div>
         <div>
           <div class="tool-name">Peer Class Visits</div>
@@ -320,7 +359,7 @@
         <span class="tool-badge badge-live">● Live</span>
       </a>
 
-      <a class="tool-card" href="https://chromewebstore.google.com/detail/papertrail/kgkjmhfoijiiplbmablcjbooopndjbgm" target="_blank" rel="noopener">
+      <a class="tool-card" href="https://chromewebstore.google.com/detail/papertrail/kgkjmhfoijiiplbmablcjbooopndjbgm" target="_blank" rel="noopener" data-keywords="plagiarism ai chatgpt cheating integrity academic honesty writing history version history paste extension">
         <img class="tool-icon-img" src="assets/icon128.png" alt="PaperTrail icon">
         <div>
           <div class="tool-name">PaperTrail</div>
@@ -329,7 +368,7 @@
         <span class="tool-badge badge-live">Extension</span>
       </a>
 
-      <a class="tool-card" href="https://write.papertrailacademic.com" target="_blank" rel="noopener">
+      <a class="tool-card" href="https://write.papertrailacademic.com" target="_blank" rel="noopener" data-keywords="timed writing in-class essay process logging integrity ai">
         <img class="tool-icon-img" src="assets/icon128.png" alt="PaperTrail icon">
         <div>
           <div class="tool-name">PaperTrail Write</div>
@@ -350,7 +389,7 @@
     </div>
     <div class="docs-grid">
 
-      <a class="doc-row" href="https://docs.google.com/document/d/1clYE_HACStTONS7LJqUNfZ5v4R5bNYmsDjndPj1gfPs/edit" target="_blank" rel="noopener">
+      <a class="doc-row" href="https://docs.google.com/document/d/1clYE_HACStTONS7LJqUNfZ5v4R5bNYmsDjndPj1gfPs/edit" target="_blank" rel="noopener" data-keywords="policy policies procedures rules expectations guide">
         <div class="doc-icon">📖</div>
         <div class="doc-info">
           <div class="doc-name">Full Department Handbook</div>
@@ -359,7 +398,7 @@
         <span class="doc-arrow">→</span>
       </a>
 
-      <a class="doc-row" href="https://docs.google.com/document/d/1c77eYU_zS2dBItOu6j1MnbBsgTyYvxo3G9INsMmGkgM/edit" target="_blank" rel="noopener">
+      <a class="doc-row" href="https://docs.google.com/document/d/1c77eYU_zS2dBItOu6j1MnbBsgTyYvxo3G9INsMmGkgM/edit" target="_blank" rel="noopener" data-keywords="meeting minutes notes department meeting plc agenda">
         <div class="doc-icon">📝</div>
         <div class="doc-info">
           <div class="doc-name">HS English Agenda: 26-27</div>
@@ -368,7 +407,7 @@
         <span class="doc-arrow">→</span>
       </a>
 
-      <a class="doc-row" href="https://docs.google.com/document/d/1Cu8K3SEySHTTengX2J3uIIxzYy0GPwc5cHXx_Wr748o/edit" target="_blank" rel="noopener">
+      <a class="doc-row" href="https://docs.google.com/document/d/1Cu8K3SEySHTTengX2J3uIIxzYy0GPwc5cHXx_Wr748o/edit" target="_blank" rel="noopener" data-keywords="grading grades assessment rubric policy marks standards scoring reporting">
         <div class="doc-icon">📋</div>
         <div class="doc-info">
           <div class="doc-name">ASD Performance Standards</div>
@@ -377,7 +416,7 @@
         <span class="doc-arrow">→</span>
       </a>
 
-      <a class="doc-row" href="https://docs.google.com/document/d/1_xXeY5ivgIuMutMn4k_QAUrOGiYkBTm1mon1xSOjXeM/copy" target="_blank" rel="noopener">
+      <a class="doc-row" href="https://docs.google.com/document/d/1_xXeY5ivgIuMutMn4k_QAUrOGiYkBTm1mon1xSOjXeM/copy" target="_blank" rel="noopener" data-keywords="onboarding orientation induction new staff first week setup">
         <div class="doc-icon">🧑‍🏫</div>
         <div class="doc-info">
           <div class="doc-name">New Teacher Checklist</div>
@@ -390,7 +429,8 @@
   </section>
 
   <!-- ── SECTION 3: IMPORTANT DOCUMENTS & LINKS ──── -->
-  <!-- NOTE: three subgroups (Forms / Schedules / Hubs). New forms go under "Forms & Requests". -->
+  <!-- NOTE: three subgroups (Forms / Schedules / Hubs). New forms go under "Forms & Requests".
+       Search: new links are searchable automatically by name. Add data-keywords="..." to the <a> so it is also found by topic words. -->
   <section class="section" id="documents">
     <div class="section-header">
       <h2 class="section-title">
@@ -404,7 +444,7 @@
     <h3 class="course-band">Forms & Requests</h3>
     <div class="docs-grid">
 
-      <a class="doc-row" href="https://docs.google.com/forms/d/e/1FAIpQLScumWa1Sip7HOXrxUTUlXjKHZ0FHNhv1uBXGa0MH4x6Vdsq1g/viewform" target="_blank" rel="noopener">
+      <a class="doc-row" href="https://docs.google.com/forms/d/e/1FAIpQLScumWa1Sip7HOXrxUTUlXjKHZ0FHNhv1uBXGa0MH4x6Vdsq1g/viewform" target="_blank" rel="noopener" data-keywords="sick ill absent day off away emergency notify cover sub substitute">
         <div class="doc-icon">📢</div>
         <div class="doc-info">
           <div class="doc-name">Absence Notification Form</div>
@@ -413,7 +453,7 @@
         <span class="doc-arrow">→</span>
       </a>
 
-      <a class="doc-row" href="https://drive.google.com/file/d/148IYZY8WR6Z10KMLLLgcRSZQGAzOYRLc/view" target="_blank" rel="noopener">
+      <a class="doc-row" href="https://drive.google.com/file/d/148IYZY8WR6Z10KMLLLgcRSZQGAzOYRLc/view" target="_blank" rel="noopener" data-keywords="leave vacation holiday personal day travel time off request">
         <div class="doc-icon">🏖️</div>
         <div class="doc-info">
           <div class="doc-name">Leave of Absence Form</div>
@@ -422,7 +462,7 @@
         <span class="doc-arrow">→</span>
       </a>
 
-      <a class="doc-row" href="https://docs.google.com/document/d/1wiFmX0_fEqYTgfz0iv7J5_Qn8iF3dVN4Y_VQmVqOhGk/copy" target="_blank" rel="noopener">
+      <a class="doc-row" href="https://docs.google.com/document/d/1wiFmX0_fEqYTgfz0iv7J5_Qn8iF3dVN4Y_VQmVqOhGk/copy" target="_blank" rel="noopener" data-keywords="sub plans cover lesson emergency plan substitute template absent">
         <div class="doc-icon">📋</div>
         <div class="doc-info">
           <div class="doc-name">Substitute Lesson Plan (SY 25/26)</div>
@@ -431,7 +471,7 @@
         <span class="doc-arrow">→</span>
       </a>
 
-      <a class="doc-row" href="https://docs.google.com/forms/d/e/1FAIpQLScNJBDDXC98ZSfQIzLpCo6IIzFPhTgCuzJm-6lP8octiVRlOA/viewform" target="_blank" rel="noopener">
+      <a class="doc-row" href="https://docs.google.com/forms/d/e/1FAIpQLScNJBDDXC98ZSfQIzLpCo6IIzFPhTgCuzJm-6lP8octiVRlOA/viewform" target="_blank" rel="noopener" data-keywords="behavior behaviour misbehavior conduct incident detention write-up consequence referral">
         <div class="doc-icon">🚩</div>
         <div class="doc-info">
           <div class="doc-name">Discipline Referral Form</div>
@@ -440,7 +480,7 @@
         <span class="doc-arrow">→</span>
       </a>
 
-      <a class="doc-row" href="https://docs.google.com/forms/d/e/1FAIpQLSct-mMYA3lspL6lG-gD-oLqVtTXF-nyW6z3xNA7I2hpT9h3Xw/viewform" target="_blank" rel="noopener">
+      <a class="doc-row" href="https://docs.google.com/forms/d/e/1FAIpQLSct-mMYA3lspL6lG-gD-oLqVtTXF-nyW6z3xNA7I2hpT9h3Xw/viewform" target="_blank" rel="noopener" data-keywords="uniform clothes clothing attire violation">
         <div class="doc-icon">👕</div>
         <div class="doc-info">
           <div class="doc-name">Dress Code Form</div>
@@ -449,7 +489,7 @@
         <span class="doc-arrow">→</span>
       </a>
 
-      <a class="doc-row" href="https://docs.google.com/forms/d/e/1FAIpQLSe46g3R2Dfh9_xcVq2b_pxxpkij5-C4Q7zNKovBPi1jRgPUJA/viewform" target="_blank" rel="noopener">
+      <a class="doc-row" href="https://docs.google.com/forms/d/e/1FAIpQLSe46g3R2Dfh9_xcVq2b_pxxpkij5-C4Q7zNKovBPi1jRgPUJA/viewform" target="_blank" rel="noopener" data-keywords="missed test exam quiz assessment makeup make-up absent summative ap ib leadership">
         <div class="doc-icon">📝</div>
         <div class="doc-info">
           <div class="doc-name">AP &amp; IB Missed Summative Tracker</div>
@@ -458,7 +498,7 @@
         <span class="doc-arrow">→</span>
       </a>
 
-      <a class="doc-row" href="https://docs.google.com/spreadsheets/d/1zbiKroKuRt9ML0Sxpqpwf1YPVytcOVVUQSfuwZwisdY/edit?gid=951939135#gid=951939135" target="_blank" rel="noopener">
+      <a class="doc-row" href="https://docs.google.com/spreadsheets/d/1zbiKroKuRt9ML0Sxpqpwf1YPVytcOVVUQSfuwZwisdY/edit?gid=951939135#gid=951939135" target="_blank" rel="noopener" data-keywords="phone mobile device confiscated collected cellphone electronics">
         <div class="doc-icon">📵</div>
         <div class="doc-info">
           <div class="doc-name">Cell Phone Log</div>
@@ -467,7 +507,7 @@
         <span class="doc-arrow">→</span>
       </a>
 
-      <a class="doc-row" href="https://docs.google.com/spreadsheets/d/17zpwBJ8A-k1h_O-jGHpRMmP3Ctli2xsAZV1wEsVZP9s/edit?gid=1413555690#gid=1413555690" target="_blank" rel="noopener">
+      <a class="doc-row" href="https://docs.google.com/spreadsheets/d/17zpwBJ8A-k1h_O-jGHpRMmP3Ctli2xsAZV1wEsVZP9s/edit?gid=1413555690#gid=1413555690" target="_blank" rel="noopener" data-keywords="awards award distinction distinguished recognition nominate nomination student of the quarter honors celebrate">
         <div class="doc-icon">🏆</div>
         <div class="doc-info">
           <div class="doc-name">HS Student Celebrations (26–27)</div>
@@ -476,7 +516,7 @@
         <span class="doc-arrow">→</span>
       </a>
 
-      <a class="doc-row" href="assets/asd-clinic-pass.pdf" target="_blank" rel="noopener">
+      <a class="doc-row" href="assets/asd-clinic-pass.pdf" target="_blank" rel="noopener" data-keywords="nurse medical health sick hall pass print">
         <div class="doc-icon">🏥</div>
         <div class="doc-info">
           <div class="doc-name">Clinic Pass (Nurse)</div>
@@ -492,7 +532,7 @@
     <h3 class="course-band">Schedules & Reference</h3>
     <div class="docs-grid">
 
-      <a class="doc-row" href="https://docs.google.com/spreadsheets/d/18qUjUMfeR9gqwZ6MZkzAaP-QtTiYqsGpqVi3jKrvPas/edit?gid=1478872002#gid=1478872002" target="_blank" rel="noopener">
+      <a class="doc-row" href="https://docs.google.com/spreadsheets/d/18qUjUMfeR9gqwZ6MZkzAaP-QtTiYqsGpqVi3jKrvPas/edit?gid=1478872002#gid=1478872002" target="_blank" rel="noopener" data-keywords="timetable bell schedule blocks periods classes rooms teachers">
         <div class="doc-icon">📅</div>
         <div class="doc-info">
           <div class="doc-name">ASD HS Master Schedule</div>
@@ -501,7 +541,7 @@
         <span class="doc-arrow">→</span>
       </a>
 
-      <a class="doc-row" href="https://docs.google.com/spreadsheets/d/1Xd95u22lQ6OigJFsQvP0xDIaTE9s0AmlqXcHf5rNynQ/edit?gid=958515242#gid=958515242" target="_blank" rel="noopener">
+      <a class="doc-row" href="https://docs.google.com/spreadsheets/d/1Xd95u22lQ6OigJFsQvP0xDIaTE9s0AmlqXcHf5rNynQ/edit?gid=958515242#gid=958515242" target="_blank" rel="noopener" data-keywords="pacing curriculum units timeline calendar plan planning">
         <div class="doc-icon">📊</div>
         <div class="doc-info">
           <div class="doc-name">ASD Scope and Sequence</div>
@@ -510,7 +550,7 @@
         <span class="doc-arrow">→</span>
       </a>
 
-      <a class="doc-row" href="https://docs.google.com/spreadsheets/d/1Vt-2GigiIUcd6GHS1oLXNnNziMyBh6wdoXUNDPB8_mE/edit?gid=0#gid=0" target="_blank" rel="noopener">
+      <a class="doc-row" href="https://docs.google.com/spreadsheets/d/1Vt-2GigiIUcd6GHS1oLXNnNziMyBh6wdoXUNDPB8_mE/edit?gid=0#gid=0" target="_blank" rel="noopener" data-keywords="supervision recess lunch break duties rota">
         <div class="doc-icon">🗓</div>
         <div class="doc-info">
           <div class="doc-name">Duty Schedule</div>
@@ -519,7 +559,7 @@
         <span class="doc-arrow">→</span>
       </a>
 
-      <a class="doc-row" href="https://docs.google.com/document/d/1PvIZYS9f2Pnx25_Mrs-E5qAfnON-bQeARXNseboU04s/edit" target="_blank" rel="noopener">
+      <a class="doc-row" href="https://docs.google.com/document/d/1PvIZYS9f2Pnx25_Mrs-E5qAfnON-bQeARXNseboU04s/edit" target="_blank" rel="noopener" data-keywords="directory phone numbers email extension staff list office admin">
         <div class="doc-icon">📇</div>
         <div class="doc-info">
           <div class="doc-name">School Contacts</div>
@@ -528,7 +568,7 @@
         <span class="doc-arrow">→</span>
       </a>
 
-      <a class="doc-row" href="https://docs.google.com/document/d/16KjUKVYcrqRe_SrfMG9SkMIeYDWVDGctb2xbSxk1B9w/edit" target="_blank" rel="noopener">
+      <a class="doc-row" href="https://docs.google.com/document/d/16KjUKVYcrqRe_SrfMG9SkMIeYDWVDGctb2xbSxk1B9w/edit" target="_blank" rel="noopener" data-keywords="policies rules procedures attendance uniform school handbook parents">
         <div class="doc-icon">📗</div>
         <div class="doc-info">
           <div class="doc-name">Student-Parent Handbook</div>
@@ -538,7 +578,7 @@
       </a>
 
       <!-- NOTE: Parent Contact link removed — placeholder until the 26-27 sheet is ready. Add href + change div back to <a> to restore. -->
-      <div class="doc-row placeholder">
+      <div class="doc-row placeholder" data-keywords="parents family guardian phone email contact">
         <div class="doc-icon">👥</div>
         <div class="doc-info">
           <div class="doc-name">ASD HS Parent Contact Info</div>
@@ -553,7 +593,7 @@
     <h3 class="course-band">Hubs & Drives</h3>
     <div class="docs-grid">
 
-      <a class="doc-row" href="https://docs.google.com/document/d/1mhgYP3niJaxTUd1ATj5G5uemvdzn655D_1MAEZW2GHM/edit" target="_blank" rel="noopener">
+      <a class="doc-row" href="https://docs.google.com/document/d/1mhgYP3niJaxTUd1ATj5G5uemvdzn655D_1MAEZW2GHM/edit" target="_blank" rel="noopener" data-keywords="links hub portal resources school-wide">
         <div class="doc-icon">🧭</div>
         <div class="doc-info">
           <div class="doc-name">ASD Dashboard</div>
@@ -562,7 +602,7 @@
         <span class="doc-arrow">→</span>
       </a>
 
-      <a class="doc-row" href="https://drive.google.com/drive/u/0/folders/0AOTV97r2jrXOUk9PVA" target="_blank" rel="noopener">
+      <a class="doc-row" href="https://drive.google.com/drive/u/0/folders/0AOTV97r2jrXOUk9PVA" target="_blank" rel="noopener" data-keywords="curriculum maps units drive folder shared files">
         <div class="doc-icon">📚</div>
         <div class="doc-info">
           <div class="doc-name">ASD Curriculum Shared Drive</div>
@@ -571,7 +611,7 @@
         <span class="doc-arrow">→</span>
       </a>
 
-      <a class="doc-row" href="https://drive.google.com/drive/folders/1Xj4xkTPQF8Yl0ZmLWiWDyckbUdbe127B" target="_blank" rel="noopener">
+      <a class="doc-row" href="https://drive.google.com/drive/folders/1Xj4xkTPQF8Yl0ZmLWiWDyckbUdbe127B" target="_blank" rel="noopener" data-keywords="homeroom advisory sel advisor">
         <div class="doc-icon">📁</div>
         <div class="doc-info">
           <div class="doc-name">Advisory Folder</div>
@@ -580,7 +620,7 @@
         <span class="doc-arrow">→</span>
       </a>
 
-      <a class="doc-row" href="https://docs.google.com/presentation/d/1IEHndAotcmgtru7fkGiyxpqnIMPEVFNMko0b8u97RbI/edit" target="_blank" rel="noopener">
+      <a class="doc-row" href="https://docs.google.com/presentation/d/1IEHndAotcmgtru7fkGiyxpqnIMPEVFNMko0b8u97RbI/edit" target="_blank" rel="noopener" data-keywords="homeroom advisory slides deck presentation sel">
         <div class="doc-icon">🖼️</div>
         <div class="doc-info">
           <div class="doc-name">Advisory Slideshow</div>
@@ -613,7 +653,7 @@
     <h3 class="course-band">Core</h3>
     <div class="curriculum-grid">
 
-      <div class="curriculum-card" data-course="eng9">
+      <div class="curriculum-card" data-course="eng9" data-keywords="grade 9 ninth freshman freshmen">
         <div class="curriculum-card-header">
           <span class="curriculum-course">English 9</span>
           <button type="button" class="star-btn" aria-pressed="false" aria-label="Pin English 9 to My Courses" title="Pin to My Courses">☆</button>
@@ -628,7 +668,7 @@
         </div>
       </div>
 
-      <div class="curriculum-card" data-course="eng10">
+      <div class="curriculum-card" data-course="eng10" data-keywords="grade 10 tenth sophomore">
         <div class="curriculum-card-header">
           <span class="curriculum-course">English 10</span>
           <button type="button" class="star-btn" aria-pressed="false" aria-label="Pin English 10 to My Courses" title="Pin to My Courses">☆</button>
@@ -643,7 +683,7 @@
         </div>
       </div>
 
-      <div class="curriculum-card" data-course="eng11">
+      <div class="curriculum-card" data-course="eng11" data-keywords="grade 11 eleventh junior">
         <div class="curriculum-card-header">
           <span class="curriculum-course">English 11</span>
           <button type="button" class="star-btn" aria-pressed="false" aria-label="Pin English 11 to My Courses" title="Pin to My Courses">☆</button>
@@ -658,7 +698,7 @@
         </div>
       </div>
 
-      <div class="curriculum-card" data-course="eng12">
+      <div class="curriculum-card" data-course="eng12" data-keywords="grade 12 twelfth senior">
         <div class="curriculum-card-header">
           <span class="curriculum-course">English 12</span>
           <button type="button" class="star-btn" aria-pressed="false" aria-label="Pin English 12 to My Courses" title="Pin to My Courses">☆</button>
@@ -678,7 +718,7 @@
     <h3 class="course-band">AP</h3>
     <div class="curriculum-grid">
 
-      <div class="curriculum-card" data-course="aplang">
+      <div class="curriculum-card" data-course="aplang" data-keywords="ap lang language composition rhetoric apl langcomp">
         <div class="curriculum-card-header">
           <span class="curriculum-course">AP Language &amp; Composition</span>
           <button type="button" class="star-btn" aria-pressed="false" aria-label="Pin AP Language and Composition to My Courses" title="Pin to My Courses">☆</button>
@@ -693,7 +733,7 @@
         </div>
       </div>
 
-      <div class="curriculum-card" data-course="aplit">
+      <div class="curriculum-card" data-course="aplit" data-keywords="ap lit literature composition">
         <div class="curriculum-card-header">
           <span class="curriculum-course">AP Literature &amp; Composition</span>
           <button type="button" class="star-btn" aria-pressed="false" aria-label="Pin AP Literature and Composition to My Courses" title="Pin to My Courses">☆</button>
@@ -713,7 +753,7 @@
     <h3 class="course-band">Electives</h3>
     <div class="curriculum-grid">
 
-      <div class="curriculum-card" data-course="speech">
+      <div class="curriculum-card" data-course="speech" data-keywords="public speaking debate oral presentation">
         <div class="curriculum-card-header">
           <span class="curriculum-course">Speech</span>
           <button type="button" class="star-btn" aria-pressed="false" aria-label="Pin Speech to My Courses" title="Pin to My Courses">☆</button>
@@ -728,7 +768,7 @@
         </div>
       </div>
 
-      <div class="curriculum-card" data-course="myth">
+      <div class="curriculum-card" data-course="myth" data-keywords="myths mythology greek legends">
         <div class="curriculum-card-header">
           <span class="curriculum-course">Mythology</span>
           <button type="button" class="star-btn" aria-pressed="false" aria-label="Pin Mythology to My Courses" title="Pin to My Courses">☆</button>
@@ -743,7 +783,7 @@
         </div>
       </div>
 
-      <div class="curriculum-card" data-course="film">
+      <div class="curriculum-card" data-course="film" data-keywords="movies cinema film lit">
         <div class="curriculum-card-header">
           <span class="curriculum-course">Film as Literature</span>
           <button type="button" class="star-btn" aria-pressed="false" aria-label="Pin Film as Literature to My Courses" title="Pin to My Courses">☆</button>
@@ -758,7 +798,7 @@
         </div>
       </div>
 
-      <div class="curriculum-card" data-course="advfilm">
+      <div class="curriculum-card" data-course="advfilm" data-keywords="advanced film movies cinema">
         <div class="curriculum-card-header">
           <span class="curriculum-course">Advanced Film as Literature</span>
           <button type="button" class="star-btn" aria-pressed="false" aria-label="Pin Advanced Film as Literature to My Courses" title="Pin to My Courses">☆</button>
@@ -773,7 +813,7 @@
         </div>
       </div>
 
-      <div class="curriculum-card" data-course="cw">
+      <div class="curriculum-card" data-course="cw" data-keywords="creative writing cw fiction poetry">
         <div class="curriculum-card-header">
           <span class="curriculum-course">Creative Writing</span>
           <button type="button" class="star-btn" aria-pressed="false" aria-label="Pin Creative Writing to My Courses" title="Pin to My Courses">☆</button>
@@ -887,6 +927,326 @@
       tag.textContent = 'Next';
       next.appendChild(tag);
     }
+  })();
+
+  // ── Site search ───────────────────────────────────
+  // Indexes every link on the page automatically (doc rows, tool cards, course links, dates).
+  // Matching: exact words, word starts, typos (1–2 letters off), and topic synonyms.
+  // To make a new link findable by topic, add data-keywords="word word word" to its <a>.
+  (function () {
+    const box = document.getElementById('site-search');
+    const input = document.getElementById('site-search-input');
+    const panel = document.getElementById('site-search-panel');
+    if (!box || !input || !panel) return;
+
+    const STOP = new Set(['the','a','an','of','for','to','my','is','where','how','do','i','what','find','link','links','page','th','st','nd','rd','and','in','on','with','get','can','our','we','are','is','was','be','does','which','there','me','show']);
+
+    // Topic groups: a word in a group also finds the other words in that group.
+    const GROUPS = [
+      ['absent','absence','absences','sick','ill','illness','unwell','away','sub','substitute','substitutes','cover','coverage'],
+      ['leave','vacation','holiday','holidays','travel','personal','timeoff'],
+      ['discipline','behavior','behaviour','misbehavior','conduct','referral','referrals','incident','detention','consequence'],
+      ['dress','uniform','clothes','clothing','attire'],
+      ['phone','phones','cell','cellphone','mobile','device','devices','confiscate','confiscated'],
+      ['clinic','nurse','medical','health','pass'],
+      ['schedule','schedules','timetable','bell','block','blocks','period','periods','rotation'],
+      ['duty','duties','supervision','recess'],
+      ['contact','contacts','directory','email','extension','number','numbers'],
+      ['handbook','policy','policies','procedure','procedures','rules','guide','expectations'],
+      ['grade','grades','grading','marks','mark','gradebook','scoring','rubric','rubrics'],
+      ['assessment','assessments','test','tests','exam','exams','quiz','quizzes','summative','summatives','makeup','retake'],
+      ['deadline','deadlines','due','date','dates','calendar','when'],
+      ['curriculum','map','maps','unit','units','pacing','syllabus','scope','sequence','planning'],
+      ['meeting','meetings','agenda','minutes','notes','plc'],
+      ['new','onboarding','orientation','induction','checklist'],
+      ['award','awards','celebration','celebrations','celebrate','distinction','distinctions','distinguished','recognition','recognize','nominate','nomination','nominations','honor','honors','honour'],
+      ['advisory','homeroom','advisor','sel'],
+      ['plagiarism','cheating','cheat','ai','chatgpt','integrity','honesty','papertrail'],
+      ['library','book','books','novel','novels','texts','inventory','borrow','checkout'],
+      ['visit','visits','observation','observations','observe','walkthrough','peer'],
+      ['drive','folder','folders','files','shared'],
+      ['parent','parents','family','families','guardian'],
+      ['dashboard','hub','portal','resources'],
+      ['film','films','movie','movies','cinema'],
+      ['speech','speaking','debate','oral','presentation'],
+      ['myth','myths','mythology','legends'],
+      ['writing','write','essay','essays'],
+      ['lang','language','rhetoric'],
+      ['lit','literature'],
+      ['comp','composition'],
+      ['9','ninth','freshman','freshmen'],
+      ['10','tenth','sophomore','sophomores'],
+      ['11','eleventh','junior','juniors'],
+      ['12','twelfth','senior','seniors'],
+      ['english','eng'],
+      ['form','forms','request','submit'],
+      ['sheet','sheets','spreadsheet'],
+      ['doc','docs','document','documents'],
+      ['slides','slideshow','deck','presentation']
+    ];
+
+    function norm(s) {
+      return String(s || '').toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '')
+        .replace(/&/g, ' and ').replace(/['’]/g, '')
+        .replace(/([a-z])(\d)/g, '$1 $2').replace(/(\d)([a-z])/g, '$1 $2')
+        .replace(/[^a-z0-9]+/g, ' ').trim();
+    }
+    const words = s => norm(s).split(' ').filter(Boolean);
+    const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    const SYN = new Map();
+    GROUPS.forEach(g => {
+      g.forEach(w => {
+        if (!SYN.has(w)) SYN.set(w, new Set());
+        g.forEach(x => { if (x !== w) SYN.get(w).add(x); });
+      });
+    });
+
+    // Optimal string alignment distance (Levenshtein + swapped letters), capped at max.
+    function osa(a, b, max) {
+      if (Math.abs(a.length - b.length) > max) return max + 1;
+      let prev2 = null, prev = Array.from({ length: b.length + 1 }, (_, j) => j);
+      for (let i = 1; i <= a.length; i++) {
+        const cur = [i]; let rowMin = i;
+        for (let j = 1; j <= b.length; j++) {
+          const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+          let v = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + cost);
+          if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) v = Math.min(v, prev2[j - 2] + 1);
+          cur[j] = v; if (v < rowMin) rowMin = v;
+        }
+        if (rowMin > max) return max + 1;
+        prev2 = prev; prev = cur;
+      }
+      return prev[b.length];
+    }
+
+    function wordScore(q, w) {
+      if (w === q) return 1;
+      if (q.length >= 2 && w.startsWith(q)) return q.length >= 3 ? 0.85 : 0.5;
+      if (q.length >= 5 && w.includes(q)) return 0.6;
+      // typos: 4-letter words must share the first letter (so "sick" doesn't find "pick")
+      if (q.length >= 5 || (q.length === 4 && q[0] === w[0] && w.length >= 3)) {
+        const max = q.length >= 8 ? 2 : 1;
+        const d = osa(q, w, max);
+        if (d <= max) return 0.75 - 0.15 * d;
+        if (q.length >= 5 && w.length > q.length && osa(q, w.slice(0, q.length), 1) <= 1) return 0.5;
+      }
+      return 0;
+    }
+
+    function synonymsFor(q) {
+      if (SYN.has(q)) return [...SYN.get(q)];
+      if (q.length >= 5) {
+        for (const [k, v] of SYN) if (k.length >= 4 && osa(q, k, 1) <= 1) return [k, ...v];
+      }
+      return [];
+    }
+
+    // ── Build the index from the page itself ──
+    let items = null;
+    const clean = s => (s || '').replace(/\s+/g, ' ').trim();
+    const sectionTitle = el => {
+      const t = el.closest('section') && el.closest('section').querySelector('.section-title');
+      return t ? clean(t.textContent).replace(/^[^A-Za-z]+/, '') : '';
+    };
+    const bandBefore = el => {
+      let n = el.previousElementSibling;
+      while (n && !n.classList.contains('course-band')) n = n.previousElementSibling;
+      return n ? clean(n.textContent) : '';
+    };
+
+    function addItem(o) {
+      const best = new Map();
+      const push = (s, f) => words(s).forEach(w => { if (!STOP.has(w) && (best.get(w) || 0) < f) best.set(w, f); });
+      push(o.name, 3); push(o.keywords, 2); push(o.group, 1.2); push(o.meta, 1);
+      o.fields = [...best].map(([w, f]) => ({ w, f }));
+      o.compact = norm(o.name + ' ' + (o.keywords || '')).replace(/ /g, '');
+      o.order = items.length;
+      items.push(o);
+    }
+
+    function buildIndex() {
+      items = [];
+      const outside = el => !el.closest('#my-courses') && !el.closest('#site-search');
+
+      document.querySelectorAll('main .doc-row, main .tool-card').forEach(el => {
+        if (!outside(el)) return;
+        const isDoc = el.classList.contains('doc-row');
+        const name = clean((el.querySelector(isDoc ? '.doc-name' : '.tool-name') || {}).textContent);
+        if (!name) return;
+        const col = el.closest('.docs-col');
+        const img = el.querySelector('img');
+        addItem({
+          el, name,
+          meta: clean((el.querySelector(isDoc ? '.doc-meta' : '.tool-desc') || {}).textContent),
+          group: col && col.querySelector('.course-band') ? clean(col.querySelector('.course-band').textContent) : sectionTitle(el),
+          keywords: el.dataset.keywords || '',
+          icon: img ? '' : clean((el.querySelector('.doc-icon, .tool-emoji') || {}).textContent),
+          img: img ? img.getAttribute('src') : '',
+          href: el.getAttribute('href'),
+          blank: el.getAttribute('target') === '_blank'
+        });
+      });
+
+      document.querySelectorAll('main .curriculum-card').forEach(card => {
+        if (!outside(card)) return;
+        const course = clean(card.querySelector('.curriculum-course').textContent);
+        const band = bandBefore(card.parentElement);
+        card.querySelectorAll('.curriculum-link').forEach(link => {
+          const label = clean(Array.from(link.childNodes).filter(n => n.nodeType === 3).map(n => n.textContent).join(' '));
+          const ph = link.classList.contains('placeholder');
+          addItem({
+            el: link,
+            name: course + ' — ' + label,
+            meta: band ? band + ' course' + (ph ? ' · Link coming soon' : '') : 'Course',
+            group: 'Courses',
+            keywords: (card.dataset.keywords || '') + ' ' + card.dataset.course + ' course class',
+            icon: clean((link.querySelector('.curriculum-link-icon') || {}).textContent),
+            href: ph ? null : link.getAttribute('href'),
+            blank: link.getAttribute('target') === '_blank'
+          });
+        });
+      });
+
+      document.querySelectorAll('main .date-card[data-date]').forEach(card => {
+        const d = new Date(card.dataset.date + 'T00:00:00');
+        const when = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+        addItem({
+          el: card,
+          name: clean((card.querySelector('.date-label') || {}).textContent),
+          meta: when + (card.classList.contains('past') ? ' · past' : ''),
+          group: 'Important Dates',
+          keywords: 'deadline due date calendar ' + d.toLocaleDateString('en-US', { month: 'long' }),
+          icon: '📅',
+          href: null
+        });
+      });
+    }
+
+    function search(raw) {
+      if (!items) buildIndex();
+      let toks = words(raw).filter(w => !STOP.has(w));
+      if (!toks.length) toks = words(raw);
+      if (!toks.length) return { list: [], partial: false };
+      const qs = toks.map(t => ({ t, syn: synonymsFor(t) }));
+      const joined = toks.join('');
+
+      const scored = items.map(item => {
+        let total = 0, matched = 0;
+        qs.forEach(q => {
+          let best = 0;
+          item.fields.forEach(({ w, f }) => {
+            const s = wordScore(q.t, w) * f;
+            if (s > best) best = s;
+            q.syn.forEach(e => {
+              const m = w === e ? 1 : (e.length >= 4 && w.startsWith(e) ? 0.85 : 0);
+              if (m && 0.7 * m * f > best) best = 0.7 * m * f;
+            });
+          });
+          if (best > 0) { matched++; total += best; }
+        });
+        // "cell phone" vs "cellphone", "paper trail" vs "PaperTrail"
+        if (joined.length >= 5 && item.compact.includes(joined)) { total += 2; matched = qs.length; }
+        return { item, total, matched };
+      });
+
+      const byScore = (a, b) => b.total - a.total || a.item.order - b.item.order;
+      const full = scored.filter(s => s.matched === qs.length).sort(byScore);
+      if (full.length) return { list: full.slice(0, 12).map(s => s.item), partial: false };
+      const need = Math.max(1, Math.ceil(qs.length / 2));
+      const part = scored.filter(s => s.matched >= need).sort(byScore);
+      return { list: part.slice(0, 8).map(s => s.item), partial: true };
+    }
+
+    // ── Results panel ──
+    let results = [], active = -1;
+
+    function open(isOpen) {
+      panel.hidden = !isOpen;
+      input.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      if (!isOpen) input.removeAttribute('aria-activedescendant');
+    }
+
+    function render() {
+      const q = input.value.trim();
+      if (!q) { open(false); results = []; return; }
+      const { list, partial } = search(q);
+      results = list; active = list.length ? 0 : -1;
+      if (!list.length) {
+        panel.innerHTML = '<div class="ss-empty">No matches for &ldquo;' + esc(q) + '&rdquo;. Try a topic &mdash; e.g. <em>sick</em>, <em>grades</em>, <em>phone</em>, <em>awards</em>, <em>schedule</em>.</div>';
+        open(true); return;
+      }
+      let html = '<div class="ss-heading">' + (partial ? 'Closest matches' : list.length + (list.length === 1 ? ' result' : ' results')) + '</div>';
+      list.forEach((it, i) => {
+        const icon = it.img ? '<img src="' + esc(it.img) + '" alt="">' : esc(it.icon || '🔗');
+        const meta = [it.group, it.meta].filter(Boolean).join(' · ') + (it.href || it.group === 'Important Dates' ? '' : ' · Link coming soon');
+        const attrs = it.href
+          ? ' href="' + esc(it.href) + '"' + (it.blank ? ' target="_blank" rel="noopener"' : '')
+          : ' href="#"';
+        html += '<a class="ss-result" role="option" id="ss-opt-' + i + '" data-i="' + i + '"' + attrs + '>' +
+          '<span class="ss-icon">' + icon + '</span>' +
+          '<span class="ss-text"><span class="ss-name">' + esc(it.name) + '</span><span class="ss-meta">' + esc(meta) + '</span></span>' +
+          '<span class="ss-arrow">' + (it.href ? '→' : '↓') + '</span></a>';
+      });
+      html += '<div class="ss-foot">↑ ↓ to move · Enter to open · Esc to close</div>';
+      panel.innerHTML = html;
+      open(true);
+      highlight();
+    }
+
+    function highlight() {
+      panel.querySelectorAll('.ss-result').forEach((el, i) => {
+        el.classList.toggle('active', i === active);
+        el.setAttribute('aria-selected', i === active ? 'true' : 'false');
+      });
+      if (active >= 0) {
+        input.setAttribute('aria-activedescendant', 'ss-opt-' + active);
+        const el = document.getElementById('ss-opt-' + active);
+        if (el) el.scrollIntoView({ block: 'nearest' });
+      }
+    }
+
+    function go(it) {
+      open(false);
+      if (it.href) {
+        if (it.blank) window.open(it.href, '_blank', 'noopener');
+        else window.location.href = it.href;
+        return;
+      }
+      // No link (dates, "coming soon" items): scroll to it on the page and flash it.
+      const target = it.el.classList.contains('curriculum-link') ? it.el.closest('.curriculum-card') : it.el;
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      target.classList.remove('search-flash'); void target.offsetWidth; target.classList.add('search-flash');
+    }
+
+    input.addEventListener('input', render);
+    input.addEventListener('focus', () => { if (input.value.trim()) render(); });
+    input.addEventListener('keydown', e => {
+      if (e.key === 'ArrowDown' && results.length) { e.preventDefault(); active = (active + 1) % results.length; highlight(); }
+      else if (e.key === 'ArrowUp' && results.length) { e.preventDefault(); active = (active - 1 + results.length) % results.length; highlight(); }
+      else if (e.key === 'Enter') { e.preventDefault(); if (results[active]) go(results[active]); }
+      else if (e.key === 'Escape') { if (input.value) { input.value = ''; render(); } else input.blur(); }
+    });
+    panel.addEventListener('mousemove', e => {
+      const el = e.target.closest('.ss-result');
+      if (el && +el.dataset.i !== active) { active = +el.dataset.i; highlight(); }
+    });
+    panel.addEventListener('click', e => {
+      const el = e.target.closest('.ss-result');
+      if (!el) return;
+      const it = results[+el.dataset.i];
+      if (!it.href) { e.preventDefault(); go(it); }
+      else open(false);
+    });
+    document.addEventListener('click', e => { if (!box.contains(e.target)) open(false); });
+    document.addEventListener('keydown', e => {
+      const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName) || document.activeElement.isContentEditable;
+      if ((e.key === '/' && !typing) || ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k')) {
+        e.preventDefault();
+        input.focus(); input.select();
+        box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
   })();
 </script>
 </body>
